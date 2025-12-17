@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
+import { logoutAdmin } from "../../api/adminApi";
 
 export default function Header() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -9,15 +10,20 @@ export default function Header() {
   const notifRef = useRef();
 const navigate = useNavigate();
 
-const handleLogout = () => {
-  // Clear authentication data
-  localStorage.removeItem('isAuthenticated');
-  localStorage.removeItem('userEmail');
-  localStorage.removeItem('userName');
-  localStorage.removeItem('authToken'); // if you use tokens
-  
-  // Redirect to login page
-  navigate('/login', { replace: true });
+const handleLogout = async () => {
+  try {
+    await logoutAdmin(); // optional, JWT stateless hai
+  } catch (error) {
+    console.log("Logout API error (ignored)");
+  }
+
+  localStorage.removeItem("isAuthenticated");
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userEmail");
+  localStorage.removeItem("userName");
+  localStorage.removeItem("userRole");
+
+  navigate("/login", { replace: true });
 };
 
   // Close dropdowns when clicking outside

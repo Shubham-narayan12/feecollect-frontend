@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginAdmin } from '../api/adminApi';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -9,72 +10,38 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Check if already logged in
-  useEffect(() => {
-    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-    if (isAuthenticated) {
-      navigate('/', { replace: true });
-    }
-  }, [navigate]);
+  const handleLogin = async () => {
+  setError("");
 
-  const handleLogin = () => {
-    // Clear any previous errors
-    setError('');
-    
-    // Basic validation
-    if (!email || !password) {
-      setError('Please enter both email and password');
-      return;
-    }
+  if (!email || !password) {
+    setError("Please enter both email and password");
+    return;
+  }
 
+  try {
     setIsLoading(true);
-    
-    // Simulate API call - Replace this with your actual authentication logic
-    setTimeout(() => {
-      // Demo credentials (REMOVE IN PRODUCTION)
-      // For demo: admin@school.com / admin123
-      if (email === 'admin@school.com' && password === 'admin123') {
-        // Set authentication flag
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('userEmail', email);
-        localStorage.setItem('userName', 'Admin User');
-        
-        // Redirect to dashboard
-        navigate('/', { replace: true });
-      } else {
-        // Login failed
-        setError('Invalid email or password');
-        setIsLoading(false);
-      }
-    }, 1500);
 
-    /* 
-    // PRODUCTION CODE - Replace the above with actual API call:
-    
-    fetch('YOUR_API_ENDPOINT/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('userEmail', email);
-        localStorage.setItem('userName', data.userName);
-        localStorage.setItem('authToken', data.token); // If you use tokens
-        navigate('/', { replace: true });
-      } else {
-        setError(data.message || 'Invalid credentials');
-        setIsLoading(false);
-      }
-    })
-    .catch(error => {
-      setError('Login failed. Please try again.');
-      setIsLoading(false);
-    });
-    */
-  };
+    const { data } = await loginAdmin({ email, password });
+
+    if (data.success) {
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("userEmail", data.admin.email);
+      localStorage.setItem("userName", data.admin.name);
+      localStorage.setItem("userRole", data.admin.role);
+
+      navigate("/", { replace: true });
+    } else {
+      setError(data.message || "Invalid credentials");
+    }
+  } catch (err) {
+    setError(
+      err.response?.data?.message || "Login failed. Please try again."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && email && password) {
@@ -236,12 +203,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Demo Credentials Notice */}
-          <div className="mb-6 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
-            <p className="text-sm text-blue-700 font-medium mb-1">Demo Credentials:</p>
-            <p className="text-xs text-blue-600">Email: admin@school.com</p>
-            <p className="text-xs text-blue-600">Password: admin123</p>
-          </div>
+         
 
           <div className="space-y-6">
             

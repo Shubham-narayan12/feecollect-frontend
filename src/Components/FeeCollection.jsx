@@ -1,18 +1,49 @@
 // src/pages/FeeCollection.jsx
 import React, { useState, useEffect } from "react";
+import { searchStudentById } from "../api/studentApi";
 
-const FEE_KEY = "school_fee_structure";
-const RECEIPT_KEY = "feeReceipts";
-const STUDENT_KEY = "school_students";
+const DUMMY_STUDENT = {
+  _id: "STU12345",
+  studentName: "Rahul Kumar",
+  className: "5",
+  section: "A",
+  fatherName: "Suresh Kumar",
+  rollNo: "REG-2025-001",
+  mobile: "9876543210",
+  address1: "Village Rampur, District Patna, Bihar",
+  photo: "", // empty => avatar letter show hoga
+};
+
+const DUMMY_FEE_STRUCTURE = {
+  5: [
+    { item: "Tuition Fee", frequency: "Monthly", amount: 1200 },
+    { item: "Transport Fee", frequency: "Monthly", amount: 600 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 3000 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 800 },
+  ],
+};
+
+const DUMMY_OLD_BALANCE = 500;
 
 export default function FeeCollection() {
-  const getStudentIdFromURL = () => new URLSearchParams(window.location.search).get("student");
-
+  const getStudentIdFromURL = () =>
+    new URLSearchParams(window.location.search).get("student");
   const [student, setStudent] = useState(null);
   const [paymentDate] = useState(new Date().toISOString().split("T")[0]);
 
   const [selectedMonths, setSelectedMonths] = useState({
-    Apr:false,May:false,Jun:false,Jul:false,Aug:false,Sep:false,Oct:false,Nov:false,Dec:false,Jan:false,Feb:false,Mar:false
+    Apr: false,
+    May: false,
+    Jun: false,
+    Jul: false,
+    Aug: false,
+    Sep: false,
+    Oct: false,
+    Nov: false,
+    Dec: false,
+    Jan: false,
+    Feb: false,
+    Mar: false,
   });
   const [selectAll, setSelectAll] = useState(false);
   const [showFeeTable, setShowFeeTable] = useState(false);
@@ -37,22 +68,26 @@ export default function FeeCollection() {
   const [selectedFeeItems, setSelectedFeeItems] = useState({});
 
   useEffect(() => {
-    const raw = localStorage.getItem(FEE_KEY);
-    setFeeStructure(raw ? JSON.parse(raw) : {});
-  }, []);
+    const fetchStudent = async () => {
+      try {
+        // TEMP: hardcoded ID (baad me URL se lenge)
+        const studentId = getStudentIdFromURL();
 
-  useEffect(() => {
-    const studentId = getStudentIdFromURL();
-    const raw = localStorage.getItem(STUDENT_KEY);
-    const students = raw ? JSON.parse(raw) : [];
-    const found = students.find(s => String(s.id) === String(studentId));
-    if (found) {
-      setStudent(found);
-      const receiptsRaw = localStorage.getItem(RECEIPT_KEY);
-      const receipts = receiptsRaw ? JSON.parse(receiptsRaw) : [];
-      const my = receipts.filter(r => String(r.studentId) === String(found.id));
-      if (my.length) setOldBalance(my[my.length - 1].newBalance || 0);
-    }
+        const res = await searchStudentById(studentId);
+
+        setStudent(res.data.student);
+      } catch (error) {
+        console.error("Student API error:", error);
+      }
+    };
+
+    fetchStudent();
+
+    // Dummy fee structure
+    setFeeStructure(DUMMY_FEE_STRUCTURE);
+
+    // Dummy old balance
+    setOldBalance(DUMMY_OLD_BALANCE);
   }, []);
 
   function getMonthCount() {
@@ -61,8 +96,8 @@ export default function FeeCollection() {
 
   function getClassFees() {
     if (!student) return [];
-    const clsKey = String(student.class);
-    return (feeStructure[clsKey] || feeStructure[student.class] || []);
+    const clsKey = String(student.className);
+    return feeStructure[clsKey] || feeStructure[student.className] || [];
   }
 
   function getLateFineInfo() {
@@ -85,7 +120,7 @@ export default function FeeCollection() {
     const months = getMonthCount();
     const { fine: fineAmount } = getLateFineInfo();
 
-    const feeRows = items.map(it => {
+    const feeRows = items.map((it) => {
       const checked = selectedFeeItems[it.item] !== false;
 
       let qty = 1;
@@ -107,7 +142,7 @@ export default function FeeCollection() {
         qty: fineAmount / 5,
         total: fineAmount,
         checked: true,
-        isFine: true
+        isFine: true,
       });
     }
 
@@ -123,21 +158,34 @@ export default function FeeCollection() {
 
   useEffect(() => {
     const total = totalFee + (additionalFee || 0);
-    const concession = concessionAmt || (total * (concessionPercent || 0) / 100);
+    const concession =
+      concessionAmt || (total * (concessionPercent || 0)) / 100;
     const net = total - concession + (oldBalance || 0);
     setNetFee(net);
     setNewBalance(net - (amountReceived || 0));
-  }, [totalFee, additionalFee, concessionPercent, concessionAmt, oldBalance, amountReceived]);
+  }, [
+    totalFee,
+    additionalFee,
+    concessionPercent,
+    concessionAmt,
+    oldBalance,
+    amountReceived,
+  ]);
 
-  const input = "border-2 border-gray-200 px-3 py-2.5 text-sm rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
+  const input =
+    "border-2 border-gray-200 px-3 py-2.5 text-sm rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
 
   if (!student) {
     return (
       <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
           <div className="text-6xl mb-4">❌</div>
-          <h2 className="text-2xl font-bold text-gray-800">Student Not Found</h2>
-          <p className="text-gray-600 mt-2">Please check the student ID and try again</p>
+          <h2 className="text-2xl font-bold text-gray-800">
+            Student Not Found
+          </h2>
+          <p className="text-gray-600 mt-2">
+            Please check the student ID and try again
+          </p>
         </div>
       </div>
     );
@@ -147,43 +195,25 @@ export default function FeeCollection() {
     if (!amountReceived || amountReceived <= 0) {
       return alert("Enter amount received");
     }
+
     const receipt = {
-      id: Date.now(),
-      studentId: student.id,
-      studentName: student.name,
-      class: student.class,
-      section: student.section,
-      paymentDate,
-      selectedMonths,
-      feeBreakdown: computeFeeBreakdown().filter(f => f.checked),
-      totalFee,
-      additionalFee,
-      concessionPercent,
-      concessionAmt,
-      oldBalance,
+      studentId: student._id,
+      studentName: student.studentName,
       netFee,
       amountReceived,
       newBalance,
       paymentMode,
-      bankName,
-      chequeNo,
-      chequeDate,
-      remark,
-      sendSMS,
-      sendWhatsApp
     };
-    const raw = localStorage.getItem(RECEIPT_KEY);
-    const receipts = raw ? JSON.parse(raw) : [];
-    receipts.push(receipt);
-    localStorage.setItem(RECEIPT_KEY, JSON.stringify(receipts));
-    alert("Saved!");
+
+    console.log("DUMMY RECEIPT:", receipt);
+
+    alert("Dummy Receipt Saved (Console me dekho)");
     window.print();
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
       <div className="max-w-6xl mx-auto">
-        
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
           <div className="flex items-center justify-between">
@@ -193,8 +223,8 @@ export default function FeeCollection() {
               </h2>
               <p className="text-gray-600 mt-1">Process student fee payment</p>
             </div>
-            <button 
-              onClick={() => window.history.back()} 
+            <button
+              onClick={() => window.history.back()}
               className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-6 py-2.5 rounded-lg font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2"
             >
               ← Back
@@ -207,14 +237,14 @@ export default function FeeCollection() {
           <div className="flex gap-6">
             <div className="flex-shrink-0">
               {student.photo ? (
-                <img 
-                  src={student.photo} 
-                  className="h-32 w-32 rounded-xl object-cover border-4 border-blue-100 shadow-md" 
+                <img
+                  src={student.photo}
+                  className="h-32 w-32 rounded-xl object-cover border-4 border-blue-100 shadow-md"
                   alt="student"
                 />
               ) : (
                 <div className="h-32 w-32 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-4xl font-bold text-white shadow-md">
-                  {String(student.name || " ")[0]}
+                  {String(student.studentName || " ")[0]}
                 </div>
               )}
             </div>
@@ -222,41 +252,71 @@ export default function FeeCollection() {
             <div className="flex-1">
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-blue-50 rounded-lg p-3">
-                  <p className="text-xs text-blue-600 font-semibold mb-1">Student Name</p>
-                  <p className="text-gray-800 font-bold text-lg">{student.name}</p>
+                  <p className="text-xs text-blue-600 font-semibold mb-1">
+                    Student Name
+                  </p>
+                  <p className="text-gray-800 font-bold text-lg">
+                    {student.studentName}
+                  </p>
                 </div>
                 <div className="bg-indigo-50 rounded-lg p-3">
-                  <p className="text-xs text-indigo-600 font-semibold mb-1">Class & Section</p>
-                  <p className="text-gray-800 font-bold text-lg">{student.class}-{student.section}</p>
+                  <p className="text-xs text-indigo-600 font-semibold mb-1">
+                    Class & Section
+                  </p>
+                  <p className="text-gray-800 font-bold text-lg">
+                    {student.className}-{student.section}
+                  </p>
                 </div>
                 <div className="bg-purple-50 rounded-lg p-3">
-                  <p className="text-xs text-purple-600 font-semibold mb-1">Father's Name</p>
-                  <p className="text-gray-800 font-semibold">{student.fatherName}</p>
+                  <p className="text-xs text-purple-600 font-semibold mb-1">
+                    Father's Name
+                  </p>
+                  <p className="text-gray-800 font-semibold">
+                    {student.fatherName}
+                  </p>
                 </div>
                 <div className="bg-pink-50 rounded-lg p-3">
-                  <p className="text-xs text-pink-600 font-semibold mb-1">Registration No</p>
-                  <p className="text-gray-800 font-semibold">{student.regNo}</p>
+                  <p className="text-xs text-pink-600 font-semibold mb-1">
+                    Registration No
+                  </p>
+                  <p className="text-gray-800 font-semibold">
+                    {student.rollNo}
+                  </p>
                 </div>
                 <div className="bg-green-50 rounded-lg p-3">
-                  <p className="text-xs text-green-600 font-semibold mb-1">Mobile</p>
-                  <p className="text-gray-800 font-semibold">{student.mobile}</p>
+                  <p className="text-xs text-green-600 font-semibold mb-1">
+                    Mobile
+                  </p>
+                  <p className="text-gray-800 font-semibold">
+                    {student.mobile}
+                  </p>
                 </div>
                 <div className="bg-orange-50 rounded-lg p-3">
-                  <p className="text-xs text-orange-600 font-semibold mb-1">Student ID</p>
-                  <p className="text-gray-800 font-semibold">{student.id}</p>
+                  <p className="text-xs text-orange-600 font-semibold mb-1">
+                    Student ID
+                  </p>
+                  <p className="text-gray-800 font-semibold">{student._id}</p>
                 </div>
                 <div className="bg-red-50 rounded-lg p-3">
-                  <p className="text-xs text-red-600 font-semibold mb-1">Old Balance</p>
-                  <p className="text-gray-800 font-bold text-lg">₹{oldBalance}</p>
+                  <p className="text-xs text-red-600 font-semibold mb-1">
+                    Old Balance
+                  </p>
+                  <p className="text-gray-800 font-bold text-lg">
+                    ₹{oldBalance}
+                  </p>
                 </div>
                 <div className="bg-cyan-50 rounded-lg p-3">
-                  <p className="text-xs text-cyan-600 font-semibold mb-1">Payment Date</p>
+                  <p className="text-xs text-cyan-600 font-semibold mb-1">
+                    Payment Date
+                  </p>
                   <p className="text-gray-800 font-semibold">{paymentDate}</p>
                 </div>
               </div>
               <div className="bg-slate-50 rounded-lg p-3 mt-4">
-                <p className="text-xs text-slate-600 font-semibold mb-1">Address</p>
-                <p className="text-gray-800">{student.address}</p>
+                <p className="text-xs text-slate-600 font-semibold mb-1">
+                  Address
+                </p>
+                <p className="text-gray-800">{student.address1}</p>
               </div>
             </div>
           </div>
@@ -267,37 +327,43 @@ export default function FeeCollection() {
           <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             📅 Month Selection
           </h3>
-          
+
           <div className="flex flex-wrap gap-3 mb-4">
             <label className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:from-blue-600 hover:to-indigo-600 transition-all shadow-md flex items-center gap-2 font-medium">
-              <input 
-                type="checkbox" 
-                checked={selectAll} 
+              <input
+                type="checkbox"
+                checked={selectAll}
                 onChange={() => {
                   const v = !selectAll;
                   setSelectAll(v);
-                  setSelectedMonths(Object.fromEntries(Object.keys(selectedMonths).map(m => [m, v])));
-                }} 
+                  setSelectedMonths(
+                    Object.fromEntries(
+                      Object.keys(selectedMonths).map((m) => [m, v])
+                    )
+                  );
+                }}
                 className="w-4 h-4"
-              /> 
+              />
               Select All
             </label>
 
-            {Object.keys(selectedMonths).map(m => (
-              <label 
-                key={m} 
+            {Object.keys(selectedMonths).map((m) => (
+              <label
+                key={m}
                 className={`px-4 py-2 rounded-lg cursor-pointer transition-all border-2 font-medium ${
-                  selectedMonths[m] 
-                    ? 'bg-blue-500 text-white border-blue-500 shadow-md' 
-                    : 'bg-white text-gray-700 border-gray-200 hover:border-blue-300'
+                  selectedMonths[m]
+                    ? "bg-blue-500 text-white border-blue-500 shadow-md"
+                    : "bg-white text-gray-700 border-gray-200 hover:border-blue-300"
                 }`}
               >
-                <input 
-                  type="checkbox" 
-                  checked={selectedMonths[m]} 
-                  onChange={() => setSelectedMonths(p => ({ ...p, [m]: !p[m] }))} 
+                <input
+                  type="checkbox"
+                  checked={selectedMonths[m]}
+                  onChange={() =>
+                    setSelectedMonths((p) => ({ ...p, [m]: !p[m] }))
+                  }
                   className="hidden"
-                /> 
+                />
                 {m}
               </label>
             ))}
@@ -307,7 +373,7 @@ export default function FeeCollection() {
             <button
               onClick={() => {
                 const init = {};
-                getClassFees().forEach(it => (init[it.item] = true));
+                getClassFees().forEach((it) => (init[it.item] = true));
                 setSelectedFeeItems(init);
                 setShowFeeTable(true);
               }}
@@ -322,7 +388,7 @@ export default function FeeCollection() {
         {showFeeTable && (
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
             <h3 className="text-xl font-bold text-gray-800 mb-4">
-              💰 Fee Structure for Class {student.class}
+              💰 Fee Structure for Class {student.className}
             </h3>
 
             {(() => {
@@ -336,7 +402,10 @@ export default function FeeCollection() {
                     <div>
                       <p className="font-bold text-lg">Late Fee Applied</p>
                       <p className="mt-1">₹5 per day after 10th of the month</p>
-                      <p className="mt-1">Payment is <strong>{lateDays} day(s)</strong> late → <strong className="text-xl">Fine ₹{fine}</strong></p>
+                      <p className="mt-1">
+                        Payment is <strong>{lateDays} day(s)</strong> late →{" "}
+                        <strong className="text-xl">Fine ₹{fine}</strong>
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -352,7 +421,9 @@ export default function FeeCollection() {
                     <th className="py-3 px-4 text-left">Frequency</th>
                     <th className="py-3 px-4 text-right">Rate</th>
                     <th className="py-3 px-4 text-right">Qty</th>
-                    <th className="py-3 px-4 text-right rounded-tr-lg">Total</th>
+                    <th className="py-3 px-4 text-right rounded-tr-lg">
+                      Total
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -368,9 +439,9 @@ export default function FeeCollection() {
                           type="checkbox"
                           checked={row.checked}
                           onChange={() =>
-                            setSelectedFeeItems(p => ({
+                            setSelectedFeeItems((p) => ({
                               ...p,
-                              [row.item]: !p[row.item]
+                              [row.item]: !p[row.item],
                             }))
                           }
                           className="w-5 h-5 rounded border-gray-300"
@@ -384,13 +455,19 @@ export default function FeeCollection() {
                       </td>
                       <td className="py-3 px-4 text-right">₹{row.amount}</td>
                       <td className="py-3 px-4 text-right">{row.qty}</td>
-                      <td className="py-3 px-4 text-right font-bold">₹{row.total}</td>
+                      <td className="py-3 px-4 text-right font-bold">
+                        ₹{row.total}
+                      </td>
                     </tr>
                   ))}
 
                   <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 font-bold text-blue-700">
-                    <td colSpan={5} className="py-3 px-4 text-lg">Subtotal</td>
-                    <td className="py-3 px-4 text-right text-xl">₹{totalFee}</td>
+                    <td colSpan={5} className="py-3 px-4 text-lg">
+                      Subtotal
+                    </td>
+                    <td className="py-3 px-4 text-right text-xl">
+                      ₹{totalFee}
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -400,79 +477,107 @@ export default function FeeCollection() {
 
         {/* Fee Calculation */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">🧮 Fee Calculation</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">
+            🧮 Fee Calculation
+          </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Total Fee</label>
-              <input 
-                type="number" 
-                className={input} 
-                value={totalFee} 
-                onChange={(e) => setTotalFee(+e.target.value)} 
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Total Fee
+              </label>
+              <input
+                type="number"
+                className={input}
+                value={totalFee}
+                onChange={(e) => setTotalFee(+e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Additional Fee</label>
-              <input 
-                type="number" 
-                className={input} 
-                value={additionalFee} 
-                onChange={(e) => setAdditionalFee(+e.target.value)} 
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Additional Fee
+              </label>
+              <input
+                type="number"
+                className={input}
+                value={additionalFee}
+                onChange={(e) => setAdditionalFee(+e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Concession (%)</label>
-              <input 
-                type="number" 
-                className={input} 
-                value={concessionPercent} 
-                onChange={(e) => { setConcessionPercent(+e.target.value); setConcessionAmt(0); }} 
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Concession (%)
+              </label>
+              <input
+                type="number"
+                className={input}
+                value={concessionPercent}
+                onChange={(e) => {
+                  setConcessionPercent(+e.target.value);
+                  setConcessionAmt(0);
+                }}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Concession Amount</label>
-              <input 
-                type="number" 
-                className={input} 
-                value={concessionAmt} 
-                onChange={(e) => { setConcessionAmt(+e.target.value); setConcessionPercent(0); }} 
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Concession Amount
+              </label>
+              <input
+                type="number"
+                className={input}
+                value={concessionAmt}
+                onChange={(e) => {
+                  setConcessionAmt(+e.target.value);
+                  setConcessionPercent(0);
+                }}
               />
             </div>
 
             <div className="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
-              <label className="block text-sm font-semibold text-blue-700 mb-2">Net Fee</label>
+              <label className="block text-sm font-semibold text-blue-700 mb-2">
+                Net Fee
+              </label>
               <p className="text-2xl font-bold text-blue-600">₹{netFee}</p>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Amount Received</label>
-              <input 
-                type="number" 
-                className={input} 
-                value={amountReceived} 
-                onChange={(e) => setAmountReceived(+e.target.value)} 
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Amount Received
+              </label>
+              <input
+                type="number"
+                className={input}
+                value={amountReceived}
+                onChange={(e) => setAmountReceived(+e.target.value)}
               />
             </div>
 
             <div className="bg-orange-50 rounded-xl p-4 border-2 border-orange-200">
-              <label className="block text-sm font-semibold text-orange-700 mb-2">New Balance</label>
-              <p className="text-2xl font-bold text-orange-600">₹{newBalance}</p>
+              <label className="block text-sm font-semibold text-orange-700 mb-2">
+                New Balance
+              </label>
+              <p className="text-2xl font-bold text-orange-600">
+                ₹{newBalance}
+              </p>
             </div>
           </div>
         </div>
 
         {/* Payment Details */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">💳 Payment Details</h3>
+          <h3 className="text-xl font-bold text-gray-800 mb-4">
+            💳 Payment Details
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Payment Mode</label>
-              <select 
-                className={input} 
-                value={paymentMode} 
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Payment Mode
+              </label>
+              <select
+                className={input}
+                value={paymentMode}
                 onChange={(e) => setPaymentMode(e.target.value)}
               >
                 <option>Cash</option>
@@ -483,42 +588,50 @@ export default function FeeCollection() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Bank Name</label>
-              <input 
-                type="text" 
-                className={input} 
-                value={bankName} 
-                onChange={(e) => setBankName(e.target.value)} 
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Bank Name
+              </label>
+              <input
+                type="text"
+                className={input}
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Cheque No</label>
-              <input 
-                type="text" 
-                className={input} 
-                value={chequeNo} 
-                onChange={(e) => setChequeNo(e.target.value)} 
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Cheque No
+              </label>
+              <input
+                type="text"
+                className={input}
+                value={chequeNo}
+                onChange={(e) => setChequeNo(e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Cheque Date</label>
-              <input 
-                type="date" 
-                className={input} 
-                value={chequeDate} 
-                onChange={(e) => setChequeDate(e.target.value)} 
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Cheque Date
+              </label>
+              <input
+                type="date"
+                className={input}
+                value={chequeDate}
+                onChange={(e) => setChequeDate(e.target.value)}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Remark</label>
-              <input 
-                type="text" 
-                className={input} 
-                value={remark} 
-                onChange={(e) => setRemark(e.target.value)} 
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Remark
+              </label>
+              <input
+                type="text"
+                className={input}
+                value={remark}
+                onChange={(e) => setRemark(e.target.value)}
               />
             </div>
           </div>
@@ -526,20 +639,19 @@ export default function FeeCollection() {
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-4">
-          <button 
-            onClick={() => window.history.back()} 
+          <button
+            onClick={() => window.history.back()}
             className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
           >
             Cancel
           </button>
-          <button 
-            onClick={saveReceipt} 
+          <button
+            onClick={saveReceipt}
             className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg flex items-center gap-2"
           >
             💾 Save & Print
           </button>
         </div>
-
       </div>
     </div>
   );
