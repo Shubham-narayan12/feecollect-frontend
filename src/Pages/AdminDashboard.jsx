@@ -9,6 +9,9 @@ import Students from "../Components/Dashboard/Students";
 import Fees from "../Components/Dashboard/Fees";
 import Reports from "../Components/Dashboard/Reports";
 import AdmissionForm from "../Components/Dashboard/AdmissionForm";
+import FeeCollection from "../Components/FeeCollection";
+
+
 
 
 export default function AdminDashboard() {
@@ -44,10 +47,11 @@ export default function AdminDashboard() {
 
             {/* Render Pages Based on Tab */}
             {tab === "dashboard" && <DashboardHome />}
-            {tab === "students" && <Students />}
-            {tab === "fees" && <Fees />}
-            {tab === "reports" && <Reports />}
-            {tab === "admission" && <AdmissionForm />}
+{tab === "students" && <Students />}
+{tab === "fee-collection" && <FeeCollection />}
+{tab === "fees" && <Fees />}
+{tab === "reports" && <Reports />}
+{tab === "admission" && <AdmissionForm />}
 
             {/* Add more Schoolfee tabs here */}
             {/* Example:
