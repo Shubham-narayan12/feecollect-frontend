@@ -1,6 +1,6 @@
-// src/pages/FeeCollection.jsx
 import React, { useState, useEffect } from "react";
-import { searchStudentById } from "../api/studentApi";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
 
 const DUMMY_STUDENT = {
   _id: "STU12345",
@@ -11,23 +11,124 @@ const DUMMY_STUDENT = {
   rollNo: "REG-2025-001",
   mobile: "9876543210",
   address1: "Village Rampur, District Patna, Bihar",
-  photo: "", // empty => avatar letter show hoga
+  photo: "",
 };
 
-const DUMMY_FEE_STRUCTURE = {
-  5: [
+// Different fee structures for different classes
+const CLASS_FEE_STRUCTURES = {
+  "1": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 5000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 800 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 2000 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 500 },
+    { item: "Activity Fee", frequency: "Monthly", amount: 200 },
+  ],
+  "2": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 5000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 900 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 2200 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 600 },
+    { item: "Activity Fee", frequency: "Monthly", amount: 250 },
+  ],
+  "3": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 6000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 1000 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 2500 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 700 },
+    { item: "Lab Fee", frequency: "Yearly", amount: 1000 },
+    { item: "Activity Fee", frequency: "Monthly", amount: 300 },
+  ],
+  "4": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 6000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 1100 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 2700 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 750 },
+    { item: "Lab Fee", frequency: "Yearly", amount: 1200 },
+    { item: "Activity Fee", frequency: "Monthly", amount: 350 },
+  ],
+  "5": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 7000 },
     { item: "Tuition Fee", frequency: "Monthly", amount: 1200 },
-    { item: "Transport Fee", frequency: "Monthly", amount: 600 },
     { item: "Annual Fee", frequency: "Yearly", amount: 3000 },
     { item: "Exam Fee", frequency: "Yearly", amount: 800 },
+    { item: "Transport Fee", frequency: "Monthly", amount: 600 },
+    { item: "Lab Fee", frequency: "Yearly", amount: 1500 },
+  ],
+  "6": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 7000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 1300 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 3200 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 900 },
+    { item: "Transport Fee", frequency: "Monthly", amount: 650 },
+    { item: "Lab Fee", frequency: "Yearly", amount: 1800 },
+  ],
+  "7": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 8000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 1400 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 3500 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 1000 },
+    { item: "Transport Fee", frequency: "Monthly", amount: 700 },
+    { item: "Lab Fee", frequency: "Yearly", amount: 2000 },
+    { item: "Computer Fee", frequency: "Yearly", amount: 1500 },
+  ],
+  "8": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 8000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 1500 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 3700 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 1100 },
+    { item: "Transport Fee", frequency: "Monthly", amount: 750 },
+    { item: "Lab Fee", frequency: "Yearly", amount: 2200 },
+    { item: "Computer Fee", frequency: "Yearly", amount: 1800 },
+  ],
+  "9": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 9000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 1600 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 4000 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 1200 },
+    { item: "Transport Fee", frequency: "Monthly", amount: 800 },
+    { item: "Lab Fee", frequency: "Yearly", amount: 2500 },
+    { item: "Computer Fee", frequency: "Yearly", amount: 2000 },
+    { item: "Library Fee", frequency: "Yearly", amount: 1000 },
+  ],
+  "10": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 9000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 1700 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 4200 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 1300 },
+    { item: "Transport Fee", frequency: "Monthly", amount: 850 },
+    { item: "Lab Fee", frequency: "Yearly", amount: 2800 },
+    { item: "Computer Fee", frequency: "Yearly", amount: 2200 },
+    { item: "Library Fee", frequency: "Yearly", amount: 1200 },
+  ],
+  "11": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 10000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 2000 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 5000 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 1500 },
+    { item: "Transport Fee", frequency: "Monthly", amount: 900 },
+    { item: "Lab Fee", frequency: "Yearly", amount: 3500 },
+    { item: "Computer Fee", frequency: "Yearly", amount: 2500 },
+    { item: "Library Fee", frequency: "Yearly", amount: 1500 },
+  ],
+  "12": [
+    { item: "Admission Fee", frequency: "Yearly", amount: 10000 },
+    { item: "Tuition Fee", frequency: "Monthly", amount: 2200 },
+    { item: "Annual Fee", frequency: "Yearly", amount: 5500 },
+    { item: "Exam Fee", frequency: "Yearly", amount: 1800 },
+    { item: "Transport Fee", frequency: "Monthly", amount: 1000 },
+    { item: "Lab Fee", frequency: "Yearly", amount: 4000 },
+    { item: "Computer Fee", frequency: "Yearly", amount: 3000 },
+    { item: "Library Fee", frequency: "Yearly", amount: 2000 },
   ],
 };
 
 const DUMMY_OLD_BALANCE = 500;
 
 export default function FeeCollection() {
-  const getStudentIdFromURL = () =>
-    new URLSearchParams(window.location.search).get("student");
+  const navigate = useNavigate();
+const [searchParams] = useSearchParams();
+const studentId = searchParams.get("student");
+
   const [student, setStudent] = useState(null);
   const [paymentDate] = useState(new Date().toISOString().split("T")[0]);
 
@@ -70,12 +171,9 @@ export default function FeeCollection() {
   useEffect(() => {
     const fetchStudent = async () => {
       try {
-        // TEMP: hardcoded ID (baad me URL se lenge)
-        const studentId = getStudentIdFromURL();
-
-        const res = await searchStudentById(studentId);
-
-        setStudent(res.data.student);
+       
+        // Using dummy student for demo
+        setStudent(DUMMY_STUDENT);
       } catch (error) {
         console.error("Student API error:", error);
       }
@@ -83,8 +181,8 @@ export default function FeeCollection() {
 
     fetchStudent();
 
-    // Dummy fee structure
-    setFeeStructure(DUMMY_FEE_STRUCTURE);
+    // Set fee structure based on class
+    setFeeStructure(CLASS_FEE_STRUCTURES);
 
     // Dummy old balance
     setOldBalance(DUMMY_OLD_BALANCE);
@@ -212,25 +310,31 @@ export default function FeeCollection() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
+   <div className="p-6 bg-slate-50">
+
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Fee Collection
-              </h2>
-              <p className="text-gray-600 mt-1">Process student fee payment</p>
-            </div>
-            <button
-              onClick={() => window.history.back()}
-              className="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-6 py-2.5 rounded-lg font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-            >
-              ← Back
-            </button>
-          </div>
-        </div>
+       {/* BREADCRUMB */}
+<div className="mb-6">
+  <nav className="flex items-center text-sm text-slate-600">
+    <button
+      onClick={() => navigate("/?tab=students")}
+      className="hover:text-blue-600 font-semibold"
+    >
+      Students
+    </button>
+
+    <span className="mx-2">→</span>
+
+    <span className="text-slate-900 font-bold">
+      Fee Collection
+    </span>
+  </nav>
+</div>
+
+<h1 className="text-2xl font-bold text-slate-800 mb-6">
+  Fee Collection
+</h1>
+
 
         {/* Student Info Card */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
@@ -640,7 +744,8 @@ export default function FeeCollection() {
         {/* Action Buttons */}
         <div className="flex justify-end gap-4">
           <button
-            onClick={() => window.history.back()}
+            onClick={() => navigate("/?tab=students")
+}
             className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
           >
             Cancel
