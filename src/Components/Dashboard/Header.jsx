@@ -42,7 +42,7 @@ const handleLogout = async () => {
 
   return (
     <>
-      <header className="ml-60 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl border-b border-slate-700/50 relative z-[200] overflow-visible backdrop-blur-sm">
+      <header className="ml-3 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl border-b border-slate-700/50 relative z-[200] overflow-visible backdrop-blur-sm">
         
         {/* Enhanced Glow Background Animation */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
