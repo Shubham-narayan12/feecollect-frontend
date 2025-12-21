@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const CLASSES = ["Nursery", "KG", "1","2","3","4","5","6","7","8","9","10"];
 const STORAGE_KEY = "school_fee_structure";
@@ -9,6 +11,7 @@ export default function FeeSettings() {
   const [newItemName, setNewItemName] = useState("");
   const [newItemAmount, setNewItemAmount] = useState("");
   const [newItemFreq, setNewItemFreq] = useState("Monthly"); // Monthly | One-time | Per-Term
+const navigate = useNavigate();
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -79,8 +82,20 @@ export default function FeeSettings() {
   }
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
       <div className="max-w-5xl mx-auto">
+    <nav className="text-sm mb-4">
+  <button
+    onClick={() => navigate("/?tab=fees")}
+    className="font-semibold text-indigo-600 hover:underline"
+  >
+    Fees
+  </button>
+  <span className="mx-2">→</span>
+  <span className="font-bold text-gray-900">Fee Settings</span>
+</nav>
+
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-indigo-100">
           <div className="flex items-center justify-between">
