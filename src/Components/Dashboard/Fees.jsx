@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GraduationCap, Search, RefreshCw, DollarSign, Calendar, Clock, TrendingUp, Sparkles } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+import { Settings } from "lucide-react";
 
 const STORAGE_KEY = "school_fee_structure";
 
@@ -208,10 +210,18 @@ export default function SchoolFeeStructure() {
   const filteredFees = feeCards.filter(fee =>
     fee.class.toLowerCase().includes(searchTerm.toLowerCase())
   );
+const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
       <div className="max-w-7xl mx-auto">
+        <button
+  onClick={() => navigate("/?tab=fee-settings")}
+  className="bg-indigo-600 text-white px-5 py-2 rounded-xl font-semibold hover:bg-indigo-700"
+>
+  ⚙️ Fee Settings
+</button>
+
         {/* Header */}
         <div className="text-center mb-10">
           <div className="inline-block mb-4">

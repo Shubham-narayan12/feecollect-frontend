@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 
+
 const DUMMY_STUDENT = {
   _id: "STU12345",
   studentName: "Rahul Kumar",
@@ -309,31 +310,40 @@ const studentId = searchParams.get("student");
     window.print();
   }
 
-  return (
-   <div className="p-6 bg-slate-50">
+return (
+  <div className="w-full min-h-full bg-slate-50 px-6 py-4">
+    
 
-      <div className="max-w-6xl mx-auto">
-       {/* BREADCRUMB */}
-<div className="mb-6">
-  <nav className="flex items-center text-sm text-slate-600">
-    <button
-      onClick={() => navigate("/?tab=students")}
-      className="hover:text-blue-600 font-semibold"
-    >
-      Students
-    </button>
+      {/* BREADCRUMB */}
+      <div className="mb-6 flex items-center justify-between">
+        <nav className="flex items-center text-sm text-slate-600">
+          <button
+            onClick={() => navigate("/?tab=students")}
+            className="hover:text-blue-600 font-semibold"
+          >
+            Students
+          </button>
 
-    <span className="mx-2">→</span>
+          <span className="mx-2">→</span>
 
-    <span className="text-slate-900 font-bold">
-      Fee Collection
-    </span>
-  </nav>
-</div>
+          <span className="text-slate-900 font-bold">
+            Fee Collection
+          </span>
+        </nav>
 
-<h1 className="text-2xl font-bold text-slate-800 mb-6">
-  Fee Collection
-</h1>
+        <button
+          onClick={() =>
+            navigate(`/?tab=payment-history&student=${studentId}`)
+          }
+          className="bg-indigo-500 hover:bg-indigo-600 text-white px-5 py-2 rounded-lg font-semibold shadow"
+        >
+          📜 Payment History
+        </button>
+      </div>
+
+      {/* REST OF YOUR CODE */}
+
+
 
 
         {/* Student Info Card */}
@@ -758,6 +768,6 @@ const studentId = searchParams.get("student");
           </button>
         </div>
       </div>
-    </div>
+    
   );
 }

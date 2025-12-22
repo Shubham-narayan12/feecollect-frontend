@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -8,12 +8,14 @@ import {
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+/* Pages & Components */
 import AdminDashboard from "./Pages/AdminDashboard";
+import LoginPage from "./Pages/LoginPage";
 import FeeCollection from "./Components/FeeCollection";
 import FeeSettings from "./Pages/FeeSettings";
-import LoginPage from "./Pages/LoginPage"; // Your login component
+import SchoolFeeStructure from "./Components/Dashboard/Fees";
 
-// Protected Route Component
+/* 🔐 Protected Route */
 function ProtectedRoute({ children }) {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
@@ -28,10 +30,10 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Route - Login */}
+        {/* 🔓 Public Route */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* Protected Routes - Require Authentication */}
+        {/* 🏠 Dashboard */}
         <Route
           path="/"
           element={
@@ -41,6 +43,17 @@ export default function App() {
           }
         />
 
+        {/* 📊 Fee Structure */}
+        <Route
+          path="/fees"
+          element={
+            <ProtectedRoute>
+              <SchoolFeeStructure />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 💰 Fee Collection */}
         <Route
           path="/fee-collection"
           element={
@@ -50,19 +63,13 @@ export default function App() {
           }
         />
 
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <FeeSettings />
-            </ProtectedRoute>
-          }
-        />
+      
 
-        {/* Catch all - redirect to login if not authenticated, otherwise to dashboard */}
+        {/* 🚫 Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      {/* Global Toast */}
+
+      {/* 🔔 Toast Notifications */}
       <ToastContainer
         position="top-right"
         autoClose={5000}
