@@ -624,8 +624,9 @@ Total Rows: ${data.totalRows}`,
                           <div className="flex gap-2">
                             <button
                               onClick={() =>
-                                navigate(`/?tab=fee-collection&student=${s._id}`)
-
+                                navigate(
+                                  `/?tab=fee-collection&student=${s._id}`
+                                )
                               }
                               className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1"
                             >
