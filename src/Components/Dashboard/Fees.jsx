@@ -7,6 +7,8 @@ import {
   Calendar,
   Clock,
   TrendingUp,
+  Settings,
+  Sparkles,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAllFeeStructures } from "../../api/feeStructure.js";
@@ -34,79 +36,93 @@ const FeeStructureCard = ({ classInfo }) => {
 
   const getGradientClass = (className) => {
     const gradients = [
-      "from-violet-500 to-purple-600",
-      "from-blue-500 to-cyan-600",
-      "from-emerald-500 to-teal-600",
-      "from-orange-500 to-red-600",
-      "from-pink-500 to-rose-600",
-      "from-indigo-500 to-blue-600",
+      "from-violet-500 via-purple-500 to-purple-600",
+      "from-blue-500 via-cyan-500 to-cyan-600",
+      "from-emerald-500 via-teal-500 to-teal-600",
+      "from-orange-500 via-amber-500 to-red-600",
+      "from-pink-500 via-rose-500 to-rose-600",
+      "from-indigo-500 via-blue-500 to-blue-600",
     ];
     const index = parseInt(className) || className.length;
     return gradients[index % gradients.length];
   };
 
   return (
-    <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden border hover:scale-105">
+    <div className="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 hover:border-indigo-300">
       <div
         className={`bg-gradient-to-r ${getGradientClass(
           classInfo.class
-        )} p-6`}
+        )} p-5 relative overflow-hidden`}
       >
-        <h3 className="text-2xl font-bold text-white">
-          Class {classInfo.class}
-        </h3>
-        <p className="text-white text-sm mt-1">
-          {classInfo.items.length} Fee Components
-        </p>
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-white rounded-full -translate-y-10 translate-x-10"></div>
+          <div className="absolute bottom-0 left-0 w-16 h-16 bg-white rounded-full translate-y-8 -translate-x-8"></div>
+        </div>
+        
+        <div className="relative flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/25 backdrop-blur-sm p-2 rounded-lg">
+              <GraduationCap className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold text-white">
+                Class {classInfo.class}
+              </h3>
+              <p className="text-white/80 text-xs mt-0.5">{classInfo.items.length} Components</p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-4">
         {monthlyItems.length > 0 && (
-          <div className="mb-4 bg-blue-50 rounded-xl p-4 border">
-            <div className="flex justify-between">
-              <span className="font-semibold text-blue-900">
-                Monthly Payment
-              </span>
-              <span className="font-bold text-blue-600">
-                ₹{monthlyTotal}
-              </span>
+          <div className="mb-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-3 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-blue-600" />
+              <span className="font-semibold text-blue-900 text-sm">Monthly</span>
             </div>
+            <span className="font-bold text-blue-600 text-lg">₹{monthlyTotal}</span>
           </div>
         )}
 
-        {/* Monthly */}
-        {monthlyItems.map((item, i) => (
-          <div key={i} className="flex justify-between py-2">
-            <span className="flex items-center gap-2 text-sm">
-              <Clock className="w-4 h-4 text-blue-500" />
-              {item.item}
-            </span>
-            <span className="font-bold">₹{item.amount}</span>
-          </div>
-        ))}
+        <div className="space-y-1.5 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          {monthlyItems.map((item, i) => (
+            <div key={i} className="flex justify-between items-center py-2 px-3 rounded-lg hover:bg-blue-50 transition-colors text-sm">
+              <span className="flex items-center gap-2 text-gray-700">
+                <Clock className="w-3.5 h-3.5 text-blue-500" />
+                {item.item}
+              </span>
+              <span className="font-bold text-gray-900">₹{item.amount}</span>
+            </div>
+          ))}
 
-        {/* One-time */}
-        {oneTimeItems.map((item, i) => (
-          <div key={i} className="flex justify-between py-2">
-            <span className="flex items-center gap-2 text-sm">
-              <DollarSign className="w-4 h-4 text-green-500" />
-              {item.item}
-            </span>
-            <span className="font-bold">₹{item.amount}</span>
-          </div>
-        ))}
+          {oneTimeItems.map((item, i) => (
+            <div key={i} className="flex justify-between items-center py-2 px-3 rounded-lg hover:bg-green-50 transition-colors text-sm">
+              <span className="flex items-center gap-2 text-gray-700">
+                <DollarSign className="w-3.5 h-3.5 text-green-500" />
+                {item.item}
+              </span>
+              <span className="font-bold text-gray-900">₹{item.amount}</span>
+            </div>
+          ))}
+        </div>
 
         {classInfo.items.length === 0 && (
-          <div className="text-center py-6 text-gray-400">
-            No fee structure
+          <div className="text-center py-8">
+            <DollarSign className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+            <p className="text-gray-400 text-sm">No fee structure</p>
           </div>
         )}
 
         {classInfo.items.length > 0 && (
-          <div className="mt-5 pt-5 border-t">
-            <div className="bg-indigo-600 text-white rounded-xl p-4 flex justify-between">
-              <div>
-                <p className="text-sm">Estimated Annual Fee</p>
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl p-4 flex justify-between items-center relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+              <div className="relative">
+                <p className="text-xs text-white/80 mb-1 flex items-center gap-1">
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  Annual Total
+                </p>
                 <p className="text-2xl font-bold">₹{totalAnnual}</p>
               </div>
               <div className="text-3xl">💰</div>
@@ -173,40 +189,63 @@ export default function SchoolFeeStructure() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8">
       <div className="max-w-7xl mx-auto">
-        <button
-          onClick={() => navigate("/?tab=fee-settings")}
-          className="bg-indigo-600 text-white px-5 py-2 rounded-xl mb-6"
-        >
-          ⚙️ Fee Settings
-        </button>
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+                <div className="bg-indigo-600 p-3 rounded-2xl shadow-lg">
+                  <GraduationCap className="w-8 h-8 text-white" />
+                </div>
+                School Fee Structure
+              </h1>
+              <p className="text-gray-600 text-lg">View and manage fee structures for all classes</p>
+            </div>
+            <button
+              onClick={() => navigate("/?tab=fee-settings")}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 group"
+            >
+              <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+              Fee Settings
+            </button>
+          </div>
 
-        <div className="mb-6 flex gap-3">
-          <input
-            placeholder="Search class..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="border p-3 rounded-xl flex-1"
-          />
-          <button
-            onClick={loadFeeStructure}
-            className="bg-indigo-600 text-white px-4 rounded-xl flex items-center gap-2"
-          >
-            <RefreshCw className="w-5 h-5" />
-            Refresh
-          </button>
+          {/* Search Bar */}
+          <div className="flex gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                placeholder="Search class..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full border-2 border-gray-200 focus:border-indigo-400 pl-12 pr-4 py-4 rounded-2xl text-lg transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-100 shadow-sm"
+              />
+            </div>
+            <button
+              onClick={loadFeeStructure}
+              className="bg-white hover:bg-gray-50 border-2 border-gray-200 text-gray-700 px-6 rounded-2xl font-semibold shadow-sm hover:shadow-md transition-all duration-300 flex items-center gap-3 group"
+            >
+              <RefreshCw className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
+              Refresh
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredFees.map((fee, i) => (
             <FeeStructureCard key={i} classInfo={fee} />
           ))}
         </div>
 
         {filteredFees.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
-            No classes found
+          <div className="text-center py-20">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-4">
+              <Search className="w-12 h-12 text-gray-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">No classes found</h3>
+            <p className="text-gray-500 text-lg">Try adjusting your search criteria</p>
           </div>
         )}
       </div>
