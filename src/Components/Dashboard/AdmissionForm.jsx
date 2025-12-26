@@ -31,7 +31,16 @@ export default function AdmissionForm() {
     charCert: "No",
     reportCard: "No",
     dobCert: "No",
+
+    // 👇 FILE OBJECTS
     photo: null,
+    fatherPhoto: null,
+    motherPhoto: null,
+
+    // 👇 PREVIEW
+    photoPreview: null,
+    fatherPhotoPreview: null,
+    motherPhotoPreview: null,
   });
 
   function handleInput(e) {
@@ -41,14 +50,40 @@ export default function AdmissionForm() {
   function handlePhoto(e) {
     const file = e.target.files[0];
     if (file) {
-      setForm({ ...form, photo: URL.createObjectURL(file) });
+      setForm({
+        ...form,
+        photo: file,
+        photoPreview: URL.createObjectURL(file),
+      });
+    }
+  }
+
+  function handleFatherPhoto(e) {
+    const file = e.target.files[0];
+    if (file) {
+      setForm({
+        ...form,
+        fatherPhoto: file,
+        fatherPhotoPreview: URL.createObjectURL(file),
+      });
+    }
+  }
+
+  function handleMotherPhoto(e) {
+    const file = e.target.files[0];
+    if (file) {
+      setForm({
+        ...form,
+        motherPhoto: file,
+        motherPhotoPreview: URL.createObjectURL(file),
+      });
     }
   }
 
   /******************* SAVE ADMISSION + ADD STUDENT *******************/
   async function submitForm() {
     try {
-      // Basic frontend validation (optional but recommended)
+      // Basic validation
       if (
         !form.studentName ||
         !form.fatherName ||
@@ -60,10 +95,41 @@ export default function AdmissionForm() {
         return;
       }
 
-      // API CALL
-      const res = await createStudent(form);
+      // ✅ FormData create
+      const formData = new FormData();
 
-      // SUCCESS
+      // 🔹 Normal fields
+      Object.keys(form).forEach((key) => {
+        if (
+          ![
+            "photo",
+            "fatherPhoto",
+            "motherPhoto",
+            "photoPreview",
+            "fatherPhotoPreview",
+            "motherPhotoPreview",
+          ].includes(key)
+        ) {
+          formData.append(key, form[key]);
+        }
+      });
+
+      // 🔹 File fields
+      if (form.photo) {
+        formData.append("photo", form.photo);
+      }
+
+      if (form.fatherPhoto) {
+        formData.append("fatherPhoto", form.fatherPhoto);
+      }
+
+      if (form.motherPhoto) {
+        formData.append("motherPhoto", form.motherPhoto);
+      }
+
+      // ✅ API CALL
+      const res = await createStudent(formData);
+
       toast.success(res?.data?.message || "Student added successfully");
 
       // Reset Form
@@ -94,10 +160,11 @@ export default function AdmissionForm() {
         reportCard: "No",
         dobCert: "No",
         photo: null,
+        fatherPhoto: null,
+        motherPhoto: null,
       });
     } catch (error) {
       console.error("Create student error:", error);
-
       toast.error(error?.response?.data?.message || "Failed to create student");
     }
   }
@@ -444,15 +511,103 @@ export default function AdmissionForm() {
                     type="file"
                     onChange={handlePhoto}
                     className="hidden"
-                    id="photo-upload"
+                    id="student-upload"
                   />
                   <label
-                    htmlFor="photo-upload"
+                    htmlFor="student-upload"
                     className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
                   >
-                    {form.photo ? (
+                    {form.photoPreview ? (
                       <img
-                        src={form.photo}
+                        src={form.photoPreview}
+                        className="h-24 w-24 rounded-xl object-cover shadow-md"
+                        alt="Student"
+                      />
+                    ) : (
+                      <div className="text-center py-4">
+                        <svg
+                          className="w-10 h-10 mx-auto text-slate-400 mb-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <p className="text-xs text-slate-500">
+                          Click to upload
+                        </p>
+                      </div>
+                    )}
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Father Photo
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    onChange={handleFatherPhoto}
+                    className="hidden"
+                    id="father-photo"
+                  />
+                  <label
+                    htmlFor="father-photo"
+                    className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
+                  >
+                    {form.fatherPhotoPreview ? (
+                      <img
+                        src={form.fatherPhotoPreview}
+                        className="h-24 w-24 rounded-xl object-cover shadow-md"
+                        alt="Student"
+                      />
+                    ) : (
+                      <div className="text-center py-4">
+                        <svg
+                          className="w-10 h-10 mx-auto text-slate-400 mb-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <p className="text-xs text-slate-500">
+                          Click to upload
+                        </p>
+                      </div>
+                    )}
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Mother Photo
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    onChange={handleMotherPhoto}
+                    className="hidden"
+                    id="mother-photo"
+                  />
+                  <label
+                    htmlFor="mother-photo"
+                    className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all duration-200"
+                  >
+                    {form.motherPhotoPreview ? (
+                      <img
+                        src={form.motherPhotoPreview}
                         className="h-24 w-24 rounded-xl object-cover shadow-md"
                         alt="Student"
                       />
@@ -564,7 +719,14 @@ export default function AdmissionForm() {
                 charCert: "No",
                 reportCard: "No",
                 dobCert: "No",
+
                 photo: null,
+                fatherPhoto: null,
+                motherPhoto: null,
+
+                photoPreview: null,
+                fatherPhotoPreview: null,
+                motherPhotoPreview: null,
               })
             }
             className="px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200"
