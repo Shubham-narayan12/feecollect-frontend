@@ -1,7 +1,11 @@
 import axiosInstance from "./axiosInstance.js";
 
-export const createStudent = async (formData) => {
-  return axiosInstance.post("/student/create", formData);
+export const createStudent = (data) => {
+  return axiosInstance.post("/student/create", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const bulkApply = async (formData) => {
