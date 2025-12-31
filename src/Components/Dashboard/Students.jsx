@@ -8,12 +8,16 @@ import { useNavigate } from "react-router-dom";
 
 import { bulkApply, getAllStudent } from "../../api/studentApi.js";
 import { toast } from "react-toastify";
+import StudentIDCard from "../Students/StudentIDCard";
+import StudentInfoModal from "../Students/StudentInfoModal";
+
 
 export default function Students() {
   const navigate = useNavigate();
 
   const [students, setStudents] = useState([]);
   const [editing, setEditing] = useState(null);
+const [showIDCard, setShowIDCard] = useState(null);
 
   // Table hidden initially
   const [showTable, setShowTable] = useState(false);
@@ -436,27 +440,32 @@ Total Rows: ${data.totalRows}`,
                         </td>
 
                         <td className="py-4 px-4">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => navigate(`/?tab=fee-collection&student=${s._id}`)}
-                              className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                              </svg>
-                              Fee
-                            </button>
+                         <div className="flex gap-2 flex-wrap">
+  {/* FEE */}
+  <button
+    onClick={() => navigate(`/?tab=fee-collection&student=${s._id}`)}
+    className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-xs font-semibold"
+  >
+    Fee
+  </button>
 
-                            <button
-                              onClick={() => setEditing(s)}
-                              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-1"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                              Edit
-                            </button>
-                          </div>
+  {/* EDIT */}
+  <button
+    onClick={() => setEditing(s)}
+    className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-semibold"
+  >
+    Edit
+  </button>
+
+  {/* ID CARD */}
+  <button
+    onClick={() => setShowIDCard(s)}
+    className="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-xs font-semibold"
+  >
+    ID Card
+  </button>
+</div>
+
                         </td>
                       </tr>
                     ))
@@ -565,6 +574,29 @@ Total Rows: ${data.totalRows}`,
             </div>
           </div>
         )}
+        {showIDCard && (
+  <StudentIDCard
+    student={showIDCard}
+    onClose={() => setShowIDCard(null)}
+  />
+)}
+{editing && (
+  <StudentInfoModal
+    student={{
+      ...editing,
+      documents: editing.documents || {
+        tc: false,
+        character: false,
+        reportCard: false,
+        birthCert: false,
+      },
+    }}
+    onClose={() => setEditing(null)}
+    onSave={handleEditSave}
+  />
+)}
+
+
       </div>
     </div>
   );
