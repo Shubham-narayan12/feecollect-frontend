@@ -8,11 +8,14 @@ import DashboardHome from "../Components/Dashboard/DashboardHome";
 import Students from "../Components/Dashboard/Students";
 import Reports from "../Components/Dashboard/Reports";
 import AdmissionForm from "../Components/Dashboard/AdmissionForm";
-import FeeCollection from "../Components/FeeCollection";
+import FeeCollection from "./FeeCollection";
 import PaymentHistory from "../Components/Dashboard/PaymentHistory";
 
 import SchoolFeeStructure from "../Components/Dashboard/Fees";
 import FeeSettings from "../Pages/FeeSettings";
+import AdminProfile from "../Pages/AdminProfile";
+import IDCardComponent from "../Components/Dashboard/IDCardComponent";
+
 
 export default function AdminDashboard() {
   const location = useLocation();
@@ -24,17 +27,19 @@ export default function AdminDashboard() {
   }, [location.search]);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
-      <div className="w-60 fixed left-0 top-0 h-screen bg-white border-r z-50">
+      <div className="w-60 fixed left-0 top-0 h-screen bg-white border-r z-[1000]">
         <AdminSidebar />
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 ml-60 flex flex-col">
+      <div className="flex-1 ml-60 flex flex-col h-screen">
+        {/* Sticky Header */}
         <AdminHeader />
 
-        <main className="flex-1 bg-gray-100 p-5">
+        {/* Scrollable Content */}
+        <main className="flex-1 overflow-y-auto bg-gray-100 p-5">
           {tab === "dashboard" && <DashboardHome />}
           {tab === "students" && <Students />}
           {tab === "fees" && <SchoolFeeStructure />}
@@ -43,8 +48,11 @@ export default function AdminDashboard() {
           {tab === "payment-history" && <PaymentHistory />}
           {tab === "reports" && <Reports />}
           {tab === "admission" && <AdmissionForm />}
+          {tab === "profile" && <AdminProfile />}
+          {tab === "id-cards" && <IDCardComponent />}
         </main>
       </div>
     </div>
   );
 }
+
