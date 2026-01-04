@@ -8,7 +8,7 @@ import DashboardHome from "../Components/Dashboard/DashboardHome";
 import Students from "../Components/Dashboard/Students";
 import Reports from "../Components/Dashboard/Reports";
 import AdmissionForm from "../Components/Dashboard/AdmissionForm";
-import FeeCollection from "../Components/FeeCollection";
+import FeeCollection from "./FeeCollection";
 import PaymentHistory from "../Components/Dashboard/PaymentHistory";
 
 import SchoolFeeStructure from "../Components/Dashboard/Fees";

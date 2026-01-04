@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 /* Pages & Components */
 import AdminDashboard from "./Pages/AdminDashboard";
 import LoginPage from "./Pages/LoginPage";
-import FeeCollection from "./Components/FeeCollection";
+import FeeCollection from "./Pages/FeeCollection";
 import FeeSettings from "./Pages/FeeSettings";
 import SchoolFeeStructure from "./Components/Dashboard/Fees";
 
