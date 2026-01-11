@@ -10,6 +10,7 @@ export default function AdmissionForm() {
     fatherName: "",
     motherName: "",
     aadharNo: "",
+    penNo: "",
     className: "",
     section: "",
     session: "",
@@ -21,16 +22,11 @@ export default function AdmissionForm() {
     address2: "",
     city: "",
     dob: "",
-    admissionDate: "",
+
     rollNo: "",
     transport: "",
     vehicle: "",
     bloodGroup: "",
-    discount: "",
-    tc: "No",
-    charCert: "No",
-    reportCard: "No",
-    dobCert: "No",
 
     // 👇 FILE OBJECTS
     photo: null,
@@ -83,11 +79,11 @@ export default function AdmissionForm() {
   /******************* SAVE ADMISSION + ADD STUDENT *******************/
   async function submitForm() {
     try {
-      // Basic validation
+      // 🔹 Basic validation
       if (
         !form.studentName ||
         !form.fatherName ||
-        !form.aadharNo ||
+        !form.penNo ||
         !form.className ||
         !form.session
       ) {
@@ -95,24 +91,57 @@ export default function AdmissionForm() {
         return;
       }
 
-      // ✅ FormData create
       const formData = new FormData();
 
-      // 🔹 Normal fields
+      // 🔹 Normal primitive fields only
       Object.keys(form).forEach((key) => {
         if (
-          ![
+          [
             "photo",
             "fatherPhoto",
             "motherPhoto",
             "photoPreview",
             "fatherPhotoPreview",
             "motherPhotoPreview",
+            "feeBenefit",
+            "recommendedFees",
           ].includes(key)
         ) {
+          return;
+        }
+
+        if (form[key] !== undefined && form[key] !== null) {
           formData.append(key, form[key]);
         }
       });
+
+      // 🔹 Fee Benefit (OBJECT → JSON)
+      if (form.feeBenefit) {
+        formData.append(
+          "feeBenefit",
+          JSON.stringify({
+            hasFeeBenefit: form.feeBenefit.hasFeeBenefit,
+            description: form.feeBenefit.description || "",
+          })
+        );
+      }
+
+      // 🔹 Recommended Fees (ARRAY → JSON)
+      if (
+        form.feeBenefit?.hasFeeBenefit &&
+        Array.isArray(form.recommendedFees) &&
+        form.recommendedFees.length > 0
+      ) {
+        formData.append(
+          "recommendedFees",
+          JSON.stringify(
+            form.recommendedFees.map((f) => ({
+              feeType: f.feeType,
+              amount: Number(f.amount),
+            }))
+          )
+        );
+      }
 
       // 🔹 File fields
       if (form.photo) {
@@ -127,17 +156,18 @@ export default function AdmissionForm() {
         formData.append("motherPhoto", form.motherPhoto);
       }
 
-      // ✅ API CALL
+      // 🔹 API CALL
       const res = await createStudent(formData);
 
       toast.success(res?.data?.message || "Student added successfully");
 
-      // Reset Form
+      // 🔹 Reset Form
       setForm({
         studentName: "",
         fatherName: "",
         motherName: "",
         aadharNo: "",
+        penNo: "",
         className: "",
         section: "",
         session: "",
@@ -149,16 +179,18 @@ export default function AdmissionForm() {
         address2: "",
         city: "",
         dob: "",
-        admissionDate: "",
         rollNo: "",
         transport: "",
         vehicle: "",
         bloodGroup: "",
-        discount: "",
-        tc: "No",
-        charCert: "No",
-        reportCard: "No",
-        dobCert: "No",
+
+        feeBenefit: {
+          hasFeeBenefit: false,
+          description: "",
+        },
+
+        recommendedFees: [],
+
         photo: null,
         fatherPhoto: null,
         motherPhoto: null,
@@ -433,6 +465,13 @@ export default function AdmissionForm() {
                 onChange={handleInput}
                 required
               />
+              <Input
+                label="Pen No"
+                name="penNo"
+                value={form.penNo}
+                onChange={handleInput}
+                required
+              />
             </div>
           </div>
         </div>
@@ -460,13 +499,6 @@ export default function AdmissionForm() {
 
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Input
-                type="date"
-                label="Admission Date"
-                name="admissionDate"
-                value={form.admissionDate}
-                onChange={handleInput}
-              />
               <Select
                 label="Session"
                 name="session"
@@ -492,13 +524,6 @@ export default function AdmissionForm() {
                 value={form.vehicle}
                 onChange={handleInput}
                 options={["Bus", "Van", "Auto", "---"]}
-              />
-              <Select
-                label="Discount"
-                name="discount"
-                value={form.discount}
-                onChange={handleInput}
-                options={["No Discount", "10%", "20%", "50%"]}
               />
 
               {/* Photo Upload */}
@@ -638,9 +663,9 @@ export default function AdmissionForm() {
           </div>
         </div>
 
-        {/* Documents Section */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
-          <div className="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-4">
+        {/* Fee Benefit / Recommendation */}
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden mt-6">
+          <div className="bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-4">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <svg
                 className="w-5 h-5"
@@ -652,42 +677,133 @@ export default function AdmissionForm() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  d="M9 12h6m-6 4h6M7 20h10a2 2 0 002-2V6a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              Documents Received
+              Fee Benefit / Recommendation
             </h3>
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <DocRadio
-                label="Transfer Certificate (TC)"
-                name="tc"
-                value={form.tc}
-                onChange={handleInput}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Has Fee Benefit */}
+              <Select
+                label="Has Fee Benefit?"
+                name="feeBenefit.hasFeeBenefit"
+                value={form.feeBenefit?.hasFeeBenefit ? "Yes" : "No"}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    feeBenefit: {
+                      ...form.feeBenefit,
+                      hasFeeBenefit: e.target.value === "Yes",
+                    },
+                  })
+                }
+                options={["No", "Yes"]}
               />
-              <DocRadio
-                label="Character Certificate"
-                name="charCert"
-                value={form.charCert}
-                onChange={handleInput}
-              />
-              <DocRadio
-                label="Report Card"
-                name="reportCard"
-                value={form.reportCard}
-                onChange={handleInput}
-              />
-              <DocRadio
-                label="Date of Birth Certificate"
-                name="dobCert"
-                value={form.dobCert}
-                onChange={handleInput}
+
+              {/* Description */}
+              <Input
+                label="Benefit Remark / Description"
+                name="feeBenefit.description"
+                value={form.feeBenefit?.description || ""}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    feeBenefit: {
+                      ...form.feeBenefit,
+                      description: e.target.value,
+                    },
+                  })
+                }
+                disabled={!form.feeBenefit?.hasFeeBenefit}
               />
             </div>
           </div>
         </div>
+
+        {/* Recommended Fees */}
+        {form.feeBenefit?.hasFeeBenefit && (
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden mt-6">
+            <div className="bg-gradient-to-r from-emerald-600 to-green-600 px-6 py-4 flex justify-between items-center">
+              <h3 className="text-lg font-bold text-white">
+                Recommended Fees (Fee Adjustment)
+              </h3>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    recommendedFees: [
+                      ...(form.recommendedFees || []),
+                      { feeType: "", amount: "" },
+                    ],
+                  })
+                }
+                className="bg-white text-emerald-600 px-3 py-1 rounded-lg text-sm font-semibold"
+              >
+                + Add
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {form.recommendedFees?.length === 0 && (
+                <p className="text-sm text-gray-500">
+                  No recommended fee added
+                </p>
+              )}
+
+              {form.recommendedFees?.map((item, index) => (
+                <div
+                  key={index}
+                  className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end border p-4 rounded-xl"
+                >
+                  {/* Fee Type */}
+                  <Input
+                    label="Fee Type"
+                    placeholder="Admission / Tuition / Transport"
+                    value={item.feeType}
+                    onChange={(e) => {
+                      const updated = [...form.recommendedFees];
+                      updated[index].feeType = e.target.value;
+                      setForm({ ...form, recommendedFees: updated });
+                    }}
+                    required
+                  />
+
+                  {/* Amount */}
+                  <Input
+                    type="number"
+                    label="Amount"
+                    value={item.amount}
+                    onChange={(e) => {
+                      const updated = [...form.recommendedFees];
+                      updated[index].amount = Number(e.target.value);
+                      setForm({ ...form, recommendedFees: updated });
+                    }}
+                    required
+                  />
+
+                  {/* Remove */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = form.recommendedFees.filter(
+                        (_, i) => i !== index
+                      );
+                      setForm({ ...form, recommendedFees: updated });
+                    }}
+                    className="text-red-600 text-sm font-semibold"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Submit Button */}
         <div className="flex justify-end gap-4">
@@ -698,6 +814,7 @@ export default function AdmissionForm() {
                 fatherName: "",
                 motherName: "",
                 aadharNo: "",
+                penNo: "",
                 className: "",
                 section: "",
                 session: "",
@@ -709,24 +826,21 @@ export default function AdmissionForm() {
                 address2: "",
                 city: "",
                 dob: "",
-                admissionDate: "",
                 rollNo: "",
                 transport: "",
                 vehicle: "",
                 bloodGroup: "",
-                discount: "",
-                tc: "No",
-                charCert: "No",
-                reportCard: "No",
-                dobCert: "No",
+
+                feeBenefit: {
+                  hasFeeBenefit: false,
+                  description: "",
+                },
+
+                recommendedFees: [],
 
                 photo: null,
                 fatherPhoto: null,
                 motherPhoto: null,
-
-                photoPreview: null,
-                fatherPhotoPreview: null,
-                motherPhotoPreview: null,
               })
             }
             className="px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200"

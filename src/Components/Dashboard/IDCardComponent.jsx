@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Upload, Search, Download, X, Loader2, FileArchive, CheckCircle } from "lucide-react";
+import { uploadZipFile } from "../../api/idcardApi";
+import { toast } from "react-toastify";
+import { generateIdCard ,downloadIdcard} from "../../api/idcardApi";
 
 export default function IDCardComponent() {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -47,45 +50,152 @@ export default function IDCardComponent() {
     });
   };
 
-  const handleSubmitFile = () => {
-    if (!uploadedFile) {
-      alert("Please select a file first");
-      return;
-    }
+  const handleSubmitFile = async () => {
+  if (!uploadedFile) {
+    alert("Please select a ZIP file first");
+    return;
+  }
 
+  try {
     setIsUploading(true);
+    setUploadSuccess(false);
 
-    // Simulate file upload for 2 seconds
-    setTimeout(() => {
-      setIsUploading(false);
+    // 🔥 ACTUAL API CALL
+    const { data } = await uploadZipFile(
+      uploadedFile,
+      "batch-2025-01" // 👈 yaha dynamic batch bhi bhej sakta hai
+    );
+
+    if (data.success) {
       setUploadSuccess(true);
-      playSuccessSound(); // Play success sound
-      alert(`File "${uploadedFile.name}" uploaded successfully!`);
-    }, 2000);
-  };
+      playSuccessSound();
 
-  const handleSearch = () => {
-    if (!fromSerial || !toSerial) {
-      alert("Please enter both serial numbers");
-      return;
+      toast.success(
+        `Upload successful!\nUpdated: ${data.updatedCount}\nWarnings: ${data.warnings.length}`
+      );
+
+      console.log("Updated Records:", data.updated);
+      console.log("Warnings:", data.warnings);
+    } else {
+      toast.error("Upload failed");
     }
+  } catch (error) {
+    console.error(error);
+    toast.error(
+      error.response?.data?.message || "Something went wrong during upload"
+    );
+  } finally {
+    setIsUploading(false);
+  }
+};
 
+
+const handleGenerateIdcard = async () => {
+  if (!fromSerial || !toSerial) {
+    toast.error("Please enter both serial numbers");
+    return;
+  }
+
+  try {
     setIsLoading(true);
     
-    // Simulate loading for 2 seconds
-    setTimeout(() => {
-      setIsLoading(false);
-      setShowModal(true);
-    }, 2000);
-  };
 
-  const handleDownload = () => {
-    // Simulate download
-    alert(`Downloading ID Cards from Serial ${fromSerial} to ${toSerial}`);
+    const payload = {
+      startSerial: Number(fromSerial),
+      endSerial: Number(toSerial),
+    };
+
+    const { data } = await generateIdCard(payload);
+
+    if (data.success) {
+      // ✅ SAVE FILE NAME IN LOCAL STORAGE
+      if (data.fileName) {
+        localStorage.setItem("bulkIdcardFileName", data.fileName);
+      }
+
+      toast.success("ID cards generated successfully", {
+        id: "generate-idcard",
+      });
+
+      setShowModal(true);
+
+      // ⚠️ warnings (non-blocking)
+      if (data.warnings?.length) {
+        toast(`Generated with ${data.warnings.length} warning(s)`, {
+          icon: "⚠️",
+          duration: 6000,
+        });
+      }
+    } else {
+      toast.error("Failed to generate ID cards", {
+        id: "generate-idcard",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message ||
+        "Error while generating bulk ID cards",
+      { id: "generate-idcard" }
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+
+  const handleDownload = async () => {
+  const fileName = localStorage.getItem("bulkIdcardFileName");
+
+  if (!fileName) {
+    toast.error("No generated ID card file found");
+    return;
+  }
+
+  try {
+    
+
+    const response = await downloadIdcard(fileName);
+
+    // 📄 Create downloadable PDF
+    const blob = new Blob([response.data], {
+      type: "application/pdf",
+    });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+
+    // 🧹 cleanup
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+    // 🗑️ remove from localStorage after SUCCESS
+    localStorage.removeItem("bulkIdcardFileName");
+
+    toast.success("ID cards downloaded successfully", {
+      id: "download-idcard",
+    });
+
+    // UI reset
     setShowModal(false);
     setFromSerial("");
     setToSerial("");
-  };
+  } catch (error) {
+    console.error(error);
+
+    toast.error(
+      error.response?.data?.message || "Failed to download ID cards",
+      { id: "download-idcard" }
+    );
+  }
+};
 
   return (
     <div className="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen p-6">
@@ -251,19 +361,19 @@ export default function IDCardComponent() {
 
               {/* Search Button */}
               <button
-                onClick={handleSearch}
+                onClick={handleGenerateIdcard}
                 disabled={isLoading}
                 className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="animate-spin" size={20} />
-                    Searching...
+                    Generating...
                   </>
                 ) : (
                   <>
-                    <Search size={20} />
-                    Search ID Cards
+                   
+                    Generate ID Cards
                   </>
                 )}
               </button>

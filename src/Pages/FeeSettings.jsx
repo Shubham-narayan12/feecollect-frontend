@@ -175,7 +175,7 @@ export default function FeeSettings() {
             >
               <option value="">Choose a class</option>
               {CLASSES.map((c) => (
-                <option key={c} value={c}>Class {c}</option>
+                <option key={c} value={c}>{c}</option>
               ))}
             </select>
           </div>

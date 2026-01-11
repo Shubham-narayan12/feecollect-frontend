@@ -397,7 +397,7 @@ Total Rows: ${data.totalRows}`,
                       <tr key={s.id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-150">
                         <td className="py-4 px-4">
                           <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full">
-                            <span className="text-sm font-bold text-slate-700">{index + 1}</span>
+                            <span className="text-sm font-bold text-slate-700">{s.serialNo}</span>
                           </div>
                         </td>
 

@@ -8,9 +8,7 @@ export const createFeeStructure = async (formData) => {
 /* ================= GET BY CLASS ================= */
 // backend me POST hai, isliye yaha bhi POST
 export const getFeeStructureByClass = async (className) => {
-  return axiosInstance.post("/feestructure/get-fee-by-class", {
-    className,
-  });
+  return axiosInstance.post("/feestructure/get-fee-by-class",className);
 };
 
 /* ================= GET ALL ================= */

@@ -8,6 +8,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { searchStudentById } from "../api/studentApi";
 import { feecollect } from "../api/feeLedgerApi";
 import { getAllFeeStructures } from "../api/feeStructure.js";
+import { getFeeStructureByClass } from "../api/feeStructure.js";
 
 // Import child components from Components/Collection/
 import { StudentInfoCard } from "../Components/Collection/StudentInfoCard";
@@ -21,8 +22,18 @@ import { FeeBreakdownSummary } from "../Components/Collection/FeeBreakdownSummar
 
 // Constants
 const monthsList = [
-  "April", "May", "June", "July", "August", "September",
-  "October", "November", "December", "January", "February", "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+  "January",
+  "February",
+  "March",
 ];
 
 // Utility: Calculate late fine for a specific month
@@ -30,10 +41,12 @@ const calculateLateFine = (month, student) => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
-  
-  const admissionDate = student?.admissionDate ? new Date(student.admissionDate) : null;
+
+  const admissionDate = student?.admissionDate
+    ? new Date(student.admissionDate)
+    : null;
   const monthIndex = monthsList.indexOf(month);
-  
+
   let monthYear = currentYear;
   if (monthIndex >= 9) {
     if (currentMonth < 3) {
@@ -48,60 +61,73 @@ const calculateLateFine = (month, student) => {
       monthYear = currentYear - 1;
     }
   }
-  
-  const monthStartDate = new Date(monthYear, monthIndex >= 9 ? monthIndex - 9 : monthIndex + 3, 1);
-  
+
+  const monthStartDate = new Date(
+    monthYear,
+    monthIndex >= 9 ? monthIndex - 9 : monthIndex + 3,
+    1
+  );
+
   if (admissionDate) {
-    if (monthStartDate < new Date(admissionDate.getFullYear(), admissionDate.getMonth(), 1)) {
+    if (
+      monthStartDate <
+      new Date(admissionDate.getFullYear(), admissionDate.getMonth(), 1)
+    ) {
       return null;
     }
-    
+
     const admissionMonth = admissionDate.getMonth();
     const admissionYear = admissionDate.getFullYear();
     const thisMonthDate = monthIndex >= 9 ? monthIndex - 9 : monthIndex + 3;
-    
+
     if (admissionYear === monthYear && admissionMonth === thisMonthDate) {
       const admissionDay = admissionDate.getDate();
-      
+
       let dueDate;
       if (admissionDay <= 10) {
         dueDate = new Date(monthYear, thisMonthDate, 10);
       } else {
         dueDate = new Date(monthYear, thisMonthDate + 1, 10);
       }
-      
-      const lateDays = Math.floor((currentDate - dueDate) / (1000 * 60 * 60 * 24));
-      
+
+      const lateDays = Math.floor(
+        (currentDate - dueDate) / (1000 * 60 * 60 * 24)
+      );
+
       if (lateDays > 0) {
         const lateFineAmount = lateDays * 10;
         return {
           month,
-          dueDate: dueDate.toLocaleDateString('en-IN'),
+          dueDate: dueDate.toLocaleDateString("en-IN"),
           lateDays,
           lateFinePerDay: 10,
           lateFineAmount,
-          isAdmissionMonth: true
+          isAdmissionMonth: true,
         };
       }
-      
+
       return null;
     }
   }
-  
-  const dueDate = new Date(monthYear, monthIndex >= 9 ? monthIndex - 9 : monthIndex + 3, 10);
+
+  const dueDate = new Date(
+    monthYear,
+    monthIndex >= 9 ? monthIndex - 9 : monthIndex + 3,
+    10
+  );
   const lateDays = Math.floor((currentDate - dueDate) / (1000 * 60 * 60 * 24));
-  
+
   if (lateDays > 0) {
     const lateFineAmount = lateDays * 10;
     return {
       month,
-      dueDate: dueDate.toLocaleDateString('en-IN'),
+      dueDate: dueDate.toLocaleDateString("en-IN"),
       lateDays,
       lateFinePerDay: 10,
-      lateFineAmount
+      lateFineAmount,
     };
   }
-  
+
   return null;
 };
 
@@ -115,7 +141,7 @@ const calculateTotals = ({
   previousBalance,
   discountType,
   discountValue,
-  paidAmount
+  paidAmount,
 }) => {
   const monthlyTotal = Object.values(monthlyFees).reduce((sum, month) => {
     if (month) {
@@ -131,11 +157,11 @@ const calculateTotals = ({
     return sum;
   }, 0);
 
-  const subtotal = 
-    Number(admissionFee || 0) + 
-    Number(annualFee || 0) + 
-    monthlyTotal + 
-    extraTotal + 
+  const subtotal =
+    Number(admissionFee || 0) +
+    Number(annualFee || 0) +
+    monthlyTotal +
+    extraTotal +
     totalLateFine +
     Number(previousBalance || 0);
 
@@ -162,12 +188,20 @@ const calculateTotals = ({
     discountAmount,
     grandTotal,
     paidAmount: Number(paidAmount || 0),
-    balanceDue: balanceDue > 0 ? balanceDue : 0
+    balanceDue: balanceDue > 0 ? balanceDue : 0,
   };
 };
 
 // Collapsible Section Component
-const CollapsibleSection = ({ id, title, icon, isOpen, toggleSection, children, badge }) => {
+const CollapsibleSection = ({
+  id,
+  title,
+  icon,
+  isOpen,
+  toggleSection,
+  children,
+  badge,
+}) => {
   return (
     <div className="mb-4 border-2 border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <button
@@ -189,12 +223,16 @@ const CollapsibleSection = ({ id, title, icon, isOpen, toggleSection, children, 
               {badge}
             </span>
           )}
-          <span className={`text-3xl transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+          <span
+            className={`text-3xl transition-transform duration-200 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          >
             ⌄
           </span>
         </div>
       </button>
-      
+
       {isOpen && (
         <div className="p-6 bg-white border-t-2 border-gray-200 animate-slideDown">
           {children}
@@ -210,6 +248,10 @@ export default function FeeCollection() {
   const studentId = searchParams.get("student");
 
   const [student, setStudent] = useState(null);
+  const [showRecommendedFeeModal, setShowRecommendedFeeModal] = useState(false);
+  const [showMasterFeeModal, setShowMasterFeeModal] = useState(false);
+  const [recommendedFee, setRecommendedFee] = useState(null);
+  const [masterFee, setMasterFee] = useState(null);
 
   // Collapsible sections state
   const [openSections, setOpenSections] = useState({
@@ -220,13 +262,13 @@ export default function FeeCollection() {
     additional: false,
     payment: false,
     discount: false,
-    summary: true
+    summary: true,
   });
 
   const toggleSection = (section) => {
-    setOpenSections(prev => ({
+    setOpenSections((prev) => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   };
 
@@ -252,7 +294,7 @@ export default function FeeCollection() {
   // Calculate late fines
   const getLateFines = () => {
     const lateFines = [];
-    Object.keys(monthlyFees).forEach(month => {
+    Object.keys(monthlyFees).forEach((month) => {
       if (monthlyFees[month]) {
         const lateFine = calculateLateFine(month, student);
         if (lateFine) {
@@ -264,7 +306,10 @@ export default function FeeCollection() {
   };
 
   const lateFines = getLateFines();
-  const totalLateFine = lateFines.reduce((sum, lf) => sum + lf.lateFineAmount, 0);
+  const totalLateFine = lateFines.reduce(
+    (sum, lf) => sum + lf.lateFineAmount,
+    0
+  );
 
   // Calculate totals
   const totals = calculateTotals({
@@ -276,31 +321,38 @@ export default function FeeCollection() {
     previousBalance,
     discountType,
     discountValue,
-    paidAmount
+    paidAmount,
   });
 
   // Auto-add late fine to extra fees
   useEffect(() => {
     if (totalLateFine > 0) {
-      const lateFineExists = extraFees.some(fee => fee.title === "Late Fine (Auto-calculated)");
-      
+      const lateFineExists = extraFees.some(
+        (fee) => fee.title === "Late Fine (Auto-calculated)"
+      );
+
       if (lateFineExists) {
-        setExtraFees(prev => 
-          prev.map(fee => 
-            fee.title === "Late Fine (Auto-calculated)" 
+        setExtraFees((prev) =>
+          prev.map((fee) =>
+            fee.title === "Late Fine (Auto-calculated)"
               ? { ...fee, amount: totalLateFine }
               : fee
           )
         );
       } else {
-        setExtraFees(prev => [...prev, { 
-          title: "Late Fine (Auto-calculated)", 
-          amount: totalLateFine,
-          isAutoCalculated: true 
-        }]);
+        setExtraFees((prev) => [
+          ...prev,
+          {
+            title: "Late Fine (Auto-calculated)",
+            amount: totalLateFine,
+            isAutoCalculated: true,
+          },
+        ]);
       }
     } else {
-      setExtraFees(prev => prev.filter(fee => fee.title !== "Late Fine (Auto-calculated)"));
+      setExtraFees((prev) =>
+        prev.filter((fee) => fee.title !== "Late Fine (Auto-calculated)")
+      );
     }
   }, [totalLateFine]);
 
@@ -308,8 +360,13 @@ export default function FeeCollection() {
   useEffect(() => {
     async function loadStudent() {
       const res = await searchStudentById(studentId);
+
       setStudent(res.data.student);
-      
+
+      if (res.data.recommendedFees) {
+        setRecommendedFee(res.data.recommendedFees);
+      }
+
       if (res.data.student.previousBalance) {
         setPreviousBalance(res.data.student.previousBalance);
       }
@@ -318,15 +375,37 @@ export default function FeeCollection() {
         await loadDefaultFeesByClass(res.data.student.className);
       }
     }
-    loadStudent();
+
+    if (studentId) loadStudent();
   }, [studentId]);
+
+  useEffect(() => {
+    async function loadMasterFee() {
+      try {
+        if (!student?.className) return;
+        console.log(student.className)
+
+        const res = await getFeeStructureByClass({className:student.className});
+        
+
+        setMasterFee(res.data.structure || null);
+      } catch (error) {
+        console.error("Failed to load master fee", error);
+        setMasterFee(null);
+      }
+    }
+
+    loadMasterFee();
+  }, [student?.className]);
 
   // Load default fees from fee structure
   const loadDefaultFeesByClass = async (className) => {
     try {
       const res = await getAllFeeStructures();
-      const feeStructure = res.data.data.find(fs => fs.className === className);
-      
+      const feeStructure = res.data.data.find(
+        (fs) => fs.className === className
+      );
+
       if (feeStructure) {
         setDefaultTuitionFee(feeStructure.tuitionFee || 0);
         setDefaultTransportFee(feeStructure.transportFee || 0);
@@ -361,40 +440,40 @@ export default function FeeCollection() {
   const selectConsecutiveMonths = (startMonth, endMonth) => {
     const startIndex = monthsList.indexOf(startMonth);
     const endIndex = monthsList.indexOf(endMonth);
-    
+
     const newMonthlyFees = { ...monthlyFees };
-    
+
     if (startIndex <= endIndex) {
       for (let i = startIndex; i <= endIndex; i++) {
         newMonthlyFees[monthsList[i]] = {
           tuitionFee: defaultTuitionFee,
-          transportFee: defaultTransportFee
+          transportFee: defaultTransportFee,
         };
       }
     } else {
       for (let i = startIndex; i < monthsList.length; i++) {
         newMonthlyFees[monthsList[i]] = {
           tuitionFee: defaultTuitionFee,
-          transportFee: defaultTransportFee
+          transportFee: defaultTransportFee,
         };
       }
       for (let i = 0; i <= endIndex; i++) {
         newMonthlyFees[monthsList[i]] = {
           tuitionFee: defaultTuitionFee,
-          transportFee: defaultTransportFee
+          transportFee: defaultTransportFee,
         };
       }
     }
-    
+
     setMonthlyFees(newMonthlyFees);
   };
 
   const selectAllMonths = () => {
     const allMonths = {};
-    monthsList.forEach(month => {
+    monthsList.forEach((month) => {
       allMonths[month] = {
         tuitionFee: defaultTuitionFee,
-        transportFee: defaultTransportFee
+        transportFee: defaultTransportFee,
       };
     });
     setMonthlyFees(allMonths);
@@ -423,7 +502,7 @@ export default function FeeCollection() {
     setExtraFees(extraFees.filter((_, i) => i !== index));
   };
 
-  // Submit handler
+  //=========================== Submit handler=========================================
   const submitFee = async () => {
     try {
       const monthlyRecords = Object.entries(monthlyFees)
@@ -443,12 +522,15 @@ export default function FeeCollection() {
         extraFees: extraFees.filter((f) => f.title && f.amount > 0),
         lateFine: totalLateFine,
         previousBalance: Number(previousBalance || 0),
-        discount: discountType !== "none" ? {
-          type: discountType,
-          value: discountValue,
-          amount: totals.discountAmount,
-          reason: discountReason
-        } : null,
+        discount:
+          discountType !== "none"
+            ? {
+                type: discountType,
+                value: discountValue,
+                amount: totals.discountAmount,
+                reason: discountReason,
+              }
+            : null,
         paidAmount,
       };
 
@@ -459,6 +541,25 @@ export default function FeeCollection() {
     } catch (err) {
       alert(err?.response?.data?.message || "Fee Collection Failed");
     }
+  };
+
+  const handleRecommendedFee = () => {
+    if (!recommendedFee || recommendedFee.length === 0) {
+      alert("No recommended fee available for this student");
+      return;
+    }
+
+    // sirf modal open karo
+    setShowRecommendedFeeModal(true);
+  };
+
+  const handleMasterFee = () => {
+    if (!masterFee) {
+      alert("Master fee not available for this class");
+      return;
+    }
+
+    setShowMasterFeeModal(true);
   };
 
   if (!student) {
@@ -472,9 +573,12 @@ export default function FeeCollection() {
     );
   }
 
-  const inputClass = "border border-gray-300 rounded-lg px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
+  const inputClass =
+    "border border-gray-300 rounded-lg px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
 
-  const selectedMonthsCount = Object.keys(monthlyFees).filter(m => monthlyFees[m]).length;
+  const selectedMonthsCount = Object.keys(monthlyFees).filter(
+    (m) => monthlyFees[m]
+  ).length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8 px-4">
@@ -482,11 +586,126 @@ export default function FeeCollection() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
-            <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-              <span className="text-4xl">💰</span>
-              Fee Collection
-            </h2>
-            <p className="text-blue-100 text-sm mt-2">Click on sections to expand/collapse</p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-3xl font-bold text-white flex items-center gap-3">
+                  <span className="text-4xl">💰</span>
+                  Fee Collection
+                </h2>
+                <p className="text-blue-100 text-sm mt-2">
+                  Click on sections to expand/collapse
+                </p>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-3">
+                {/* Recommended Fee (only if feeBenefit = true) */}
+                {student?.feeBenefit?.hasFeeBenefit && (
+                  <button
+                    onClick={handleRecommendedFee}
+                    className="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow"
+                  >
+                    ⭐ Recommended Fee
+                  </button>
+                )}
+
+                {/* Master Fee (always visible) */}
+                <button
+                  onClick={handleMasterFee}
+                  className="bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow border border-white/30"
+                >
+                  📚 Master Fee
+                </button>
+
+                {/* SHOW RECOMMENDED FEE MODAL */}
+                {showRecommendedFeeModal && (
+                  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl w-[420px] p-6">
+                      <h3 className="text-xl font-bold mb-4 text-gray-800">
+                        ⭐ Recommended Fee
+                      </h3>
+
+                      <div className="space-y-2">
+                        {recommendedFee.map((fee, index) => (
+                          <div
+                            key={index}
+                            className="flex justify-between bg-gray-100 px-4 py-2 rounded"
+                          >
+                            <span className="font-medium">{fee.feeType}</span>
+                            <span className="font-semibold">
+                              ₹ {fee.amount}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="flex justify-end gap-3 mt-6">
+                        <button
+                          onClick={() => setShowRecommendedFeeModal(false)}
+                          className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* SHOW MASTER FEE MODAL */}
+                {showMasterFeeModal && (
+                  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl w-[450px] p-6">
+                      <h3 className="text-xl font-bold mb-4 text-gray-800">
+                        📚 Master Fee Structure
+                      </h3>
+
+                      <div className="space-y-3 text-sm">
+                        {masterFee.admissionFee > 0 && (
+                          <div className="flex justify-between bg-gray-100 px-4 py-2 rounded">
+                            <span>Admission Fee</span>
+                            <span className="font-semibold">
+                              ₹ {masterFee.admissionFee}
+                            </span>
+                          </div>
+                        )}
+
+                        {masterFee.annualFee > 0 && (
+                          <div className="flex justify-between bg-gray-100 px-4 py-2 rounded">
+                            <span>Annual Fee</span>
+                            <span className="font-semibold">
+                              ₹ {masterFee.annualFee}
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="flex justify-between bg-gray-100 px-4 py-2 rounded">
+                          <span>Monthly Tuition Fee</span>
+                          <span className="font-semibold">
+                            ₹ {masterFee.tuitionFee}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between bg-gray-100 px-4 py-2 rounded">
+                          <span>Monthly Transport Fee</span>
+                          <span className="font-semibold">
+                            ₹ {masterFee.transportFee}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end mt-6">
+                        <button
+                          onClick={() => setShowMasterFeeModal(false)}
+                          className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="p-8">
@@ -511,7 +730,7 @@ export default function FeeCollection() {
                 toggleSection={toggleSection}
                 badge={`₹${previousBalance.toFixed(2)}`}
               >
-                <PreviousBalanceCard 
+                <PreviousBalanceCard
                   previousBalance={previousBalance}
                   setPreviousBalance={setPreviousBalance}
                   inputClass={inputClass}
@@ -543,7 +762,11 @@ export default function FeeCollection() {
               icon="📅"
               isOpen={openSections.monthly}
               toggleSection={toggleSection}
-              badge={selectedMonthsCount > 0 ? `${selectedMonthsCount} months selected` : null}
+              badge={
+                selectedMonthsCount > 0
+                  ? `${selectedMonthsCount} months selected`
+                  : null
+              }
             >
               <MonthlyFeesSection
                 monthsList={monthsList}
@@ -562,7 +785,7 @@ export default function FeeCollection() {
               {/* Late Fine Alert inside Monthly section */}
               {lateFines.length > 0 && (
                 <div className="mt-6">
-                  <LateFineAlert 
+                  <LateFineAlert
                     lateFines={lateFines}
                     totalLateFine={totalLateFine}
                     student={student}
@@ -596,7 +819,9 @@ export default function FeeCollection() {
               icon="💵"
               isOpen={openSections.payment}
               toggleSection={toggleSection}
-              badge={paidAmount > 0 ? `₹${Number(paidAmount).toFixed(2)}` : null}
+              badge={
+                paidAmount > 0 ? `₹${Number(paidAmount).toFixed(2)}` : null
+              }
             >
               <div className="max-w-md">
                 <input
@@ -616,7 +841,11 @@ export default function FeeCollection() {
               icon="🎁"
               isOpen={openSections.discount}
               toggleSection={toggleSection}
-              badge={totals.discountAmount > 0 ? `-₹${totals.discountAmount.toFixed(2)}` : null}
+              badge={
+                totals.discountAmount > 0
+                  ? `-₹${totals.discountAmount.toFixed(2)}`
+                  : null
+              }
             >
               <DiscountSection
                 discountType={discountType}
