@@ -1,7 +1,8 @@
-import { loadAdmissions, saveAdmissions } from "../../Data/admissionStorage";
-import { addStudent } from "../../Data/studentStorage";
+import { loadAdmissions, saveAdmissions } from "../../../../Data/admissionStorage";
+import { addStudent } from "../../../../Data/studentStorage";
+
 import React, { useState } from "react";
-import { createStudent } from "../../api/studentApi.js";
+import { createStudent } from "../../../../api/studentApi.js";
 import { toast } from "react-toastify";
 
 export default function AdmissionForm() {

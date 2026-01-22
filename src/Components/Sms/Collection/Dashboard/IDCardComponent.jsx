@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { Upload, Search, Download, X, Loader2, FileArchive, CheckCircle } from "lucide-react";
-import { uploadZipFile } from "../../api/idcardApi";
+import { Upload, Search, Download, X, Loader2, FileArchive, CheckCircle, GraduationCap } from "lucide-react";
 import { toast } from "react-toastify";
-import { generateIdCard ,downloadIdcard} from "../../api/idcardApi";
+import {
+  uploadZipFile,
+  generateIdCard,
+  downloadIdcard,
+} from "../../../../api/idcardApi";
+
 
 export default function IDCardComponent() {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -12,6 +16,12 @@ export default function IDCardComponent() {
   const [showModal, setShowModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  
+  // New states for class/section feature
+  const [className, setClassName] = useState("");
+  const [section, setSection] = useState("");
+  const [isLoadingClass, setIsLoadingClass] = useState(false);
+  const [showClassModal, setShowClassModal] = useState(false);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -42,7 +52,7 @@ export default function IDCardComponent() {
       oscillator.type = 'sine';
       
       const startTime = audioContext.currentTime + (index * duration);
-      gainNode.gain.setValueAtTime(0.8, startTime); // Increased from 0.3 to 0.8 (much louder!)
+      gainNode.gain.setValueAtTime(0.8, startTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
       
       oscillator.start(startTime);
@@ -51,151 +61,171 @@ export default function IDCardComponent() {
   };
 
   const handleSubmitFile = async () => {
-  if (!uploadedFile) {
-    alert("Please select a ZIP file first");
-    return;
-  }
+    if (!uploadedFile) {
+      alert("Please select a ZIP file first");
+      return;
+    }
 
-  try {
-    setIsUploading(true);
-    setUploadSuccess(false);
+    try {
+      setIsUploading(true);
+      setUploadSuccess(false);
 
-    // 🔥 ACTUAL API CALL
-    const { data } = await uploadZipFile(
-      uploadedFile,
-      "batch-2025-01" // 👈 yaha dynamic batch bhi bhej sakta hai
-    );
-
-    if (data.success) {
-      setUploadSuccess(true);
-      playSuccessSound();
-
-      toast.success(
-        `Upload successful!\nUpdated: ${data.updatedCount}\nWarnings: ${data.warnings.length}`
+      const { data } = await uploadZipFile(
+        uploadedFile,
+        "batch-2025-01"
       );
 
-      console.log("Updated Records:", data.updated);
-      console.log("Warnings:", data.warnings);
-    } else {
-      toast.error("Upload failed");
-    }
-  } catch (error) {
-    console.error(error);
-    toast.error(
-      error.response?.data?.message || "Something went wrong during upload"
-    );
-  } finally {
-    setIsUploading(false);
-  }
-};
+      if (data.success) {
+        setUploadSuccess(true);
+        playSuccessSound();
 
+        toast.success(
+          `Upload successful!\nUpdated: ${data.updatedCount}\nWarnings: ${data.warnings.length}`
+        );
 
-const handleGenerateIdcard = async () => {
-  if (!fromSerial || !toSerial) {
-    toast.error("Please enter both serial numbers");
-    return;
-  }
-
-  try {
-    setIsLoading(true);
-    
-
-    const payload = {
-      startSerial: Number(fromSerial),
-      endSerial: Number(toSerial),
-    };
-
-    const { data } = await generateIdCard(payload);
-
-    if (data.success) {
-      // ✅ SAVE FILE NAME IN LOCAL STORAGE
-      if (data.fileName) {
-        localStorage.setItem("bulkIdcardFileName", data.fileName);
+        console.log("Updated Records:", data.updated);
+        console.log("Warnings:", data.warnings);
+      } else {
+        toast.error("Upload failed");
       }
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message || "Something went wrong during upload"
+      );
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
-      toast.success("ID cards generated successfully", {
-        id: "generate-idcard",
-      });
+  const handleGenerateIdcard = async () => {
+    if (!fromSerial || !toSerial) {
+      toast.error("Please enter both serial numbers");
+      return;
+    }
 
-      setShowModal(true);
+    try {
+      setIsLoading(true);
 
-      // ⚠️ warnings (non-blocking)
-      if (data.warnings?.length) {
-        toast(`Generated with ${data.warnings.length} warning(s)`, {
-          icon: "⚠️",
-          duration: 6000,
+      const payload = {
+        startSerial: Number(fromSerial),
+        endSerial: Number(toSerial),
+      };
+
+      const { data } = await generateIdCard(payload);
+
+      if (data.success) {
+        if (data.fileName) {
+          localStorage.setItem("bulkIdcardFileName", data.fileName);
+        }
+
+        toast.success("ID cards generated successfully", {
+          id: "generate-idcard",
+        });
+
+        setShowModal(true);
+
+        if (data.warnings?.length) {
+          toast(`Generated with ${data.warnings.length} warning(s)`, {
+            icon: "⚠️",
+            duration: 6000,
+          });
+        }
+      } else {
+        toast.error("Failed to generate ID cards", {
+          id: "generate-idcard",
         });
       }
-    } else {
-      toast.error("Failed to generate ID cards", {
-        id: "generate-idcard",
-      });
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error.response?.data?.message ||
+          "Error while generating bulk ID cards",
+        { id: "generate-idcard" }
+      );
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error(error);
+  };
 
-    toast.error(
-      error.response?.data?.message ||
-        "Error while generating bulk ID cards",
-      { id: "generate-idcard" }
-    );
-  } finally {
-    setIsLoading(false);
-  }
-};
+  // New function for class/section based generation
+  const handleGenerateByClass = async () => {
+    if (!className) {
+      toast.error("Please enter class name");
+      return;
+    }
 
-
+    // Just show the modal with the entered data (no API call)
+    setShowClassModal(true);
+    
+    toast.success("Ready to generate ID cards by class/section", {
+      id: "generate-idcard-class",
+    });
+  };
 
   const handleDownload = async () => {
-  const fileName = localStorage.getItem("bulkIdcardFileName");
+    const fileName = localStorage.getItem("bulkIdcardFileName");
 
-  if (!fileName) {
-    toast.error("No generated ID card file found");
-    return;
-  }
+    if (!fileName) {
+      toast.error("No generated ID card file found");
+      return;
+    }
 
-  try {
-    
+    try {
+      const response = await downloadIdcard(fileName);
 
-    const response = await downloadIdcard(fileName);
+      const blob = new Blob([response.data], {
+        type: "application/pdf",
+      });
 
-    // 📄 Create downloadable PDF
-    const blob = new Blob([response.data], {
-      type: "application/pdf",
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      localStorage.removeItem("bulkIdcardFileName");
+
+      toast.success("ID cards downloaded successfully", {
+        id: "download-idcard",
+      });
+
+      setShowModal(false);
+      setFromSerial("");
+      setToSerial("");
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error.response?.data?.message || "Failed to download ID cards",
+        { id: "download-idcard" }
+      );
+    }
+  };
+
+  // New function for downloading class-based ID cards
+  const handleDownloadByClass = async () => {
+    // Just log the data for now (you can integrate API later)
+    console.log("Download ID Cards for:", {
+      className: className,
+      section: section || "All Sections"
     });
 
-    const url = window.URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
-    link.click();
-
-    // 🧹 cleanup
-    link.remove();
-    window.URL.revokeObjectURL(url);
-
-    // 🗑️ remove from localStorage after SUCCESS
-    localStorage.removeItem("bulkIdcardFileName");
-
-    toast.success("ID cards downloaded successfully", {
-      id: "download-idcard",
+    toast.info(`Ready to download ID cards for Class ${className}${section ? ` - Section ${section}` : ''}`, {
+      id: "download-idcard-class",
     });
 
-    // UI reset
-    setShowModal(false);
-    setFromSerial("");
-    setToSerial("");
-  } catch (error) {
-    console.error(error);
-
-    toast.error(
-      error.response?.data?.message || "Failed to download ID cards",
-      { id: "download-idcard" }
-    );
-  }
-};
+    // Close modal and reset form
+    setShowClassModal(false);
+    setClassName("");
+    setSection("");
+  };
 
   return (
     <div className="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen p-6">
@@ -218,8 +248,8 @@ const handleGenerateIdcard = async () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Upload Section with enhanced styling */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Upload Section */}
           <div className="group relative">
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300 blur-xl"></div>
             <div className="relative bg-white rounded-2xl shadow-lg border border-gray-200 p-8 hover:shadow-xl hover:border-emerald-300 transition-all duration-300">
@@ -314,7 +344,7 @@ const handleGenerateIdcard = async () => {
             </div>
           </div>
 
-          {/* Search Section with enhanced styling */}
+          {/* Search by Serial Number Section */}
           <div className="group relative">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300 blur-xl"></div>
             <div className="relative bg-white rounded-2xl shadow-lg border border-gray-200 p-8 hover:shadow-xl hover:border-blue-300 transition-all duration-300">
@@ -322,11 +352,10 @@ const handleGenerateIdcard = async () => {
                 <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-md">
                   <Search className="text-white" size={24} />
                 </div>
-                <h2 className="text-xl font-bold text-gray-800">Search ID Cards</h2>
+                <h2 className="text-xl font-bold text-gray-800">Search by Serial</h2>
               </div>
 
               <div className="space-y-5 mb-6">
-                {/* From Serial Number */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     From Serial Number
@@ -342,7 +371,6 @@ const handleGenerateIdcard = async () => {
                   </div>
                 </div>
 
-                {/* To Serial Number */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     To Serial Number
@@ -359,7 +387,6 @@ const handleGenerateIdcard = async () => {
                 </div>
               </div>
 
-              {/* Search Button */}
               <button
                 onClick={handleGenerateIdcard}
                 disabled={isLoading}
@@ -372,10 +399,63 @@ const handleGenerateIdcard = async () => {
                   </>
                 ) : (
                   <>
-                   
                     Generate ID Cards
                   </>
                 )}
+              </button>
+            </div>
+          </div>
+
+          {/* NEW: Search by Class & Section */}
+          <div className="group relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300 blur-xl"></div>
+            <div className="relative bg-white rounded-2xl shadow-lg border border-gray-200 p-8 hover:shadow-xl hover:border-purple-300 transition-all duration-300">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-md">
+                  <GraduationCap className="text-white" size={24} />
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">By Class & Section</h2>
+              </div>
+
+              <div className="space-y-5 mb-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Class Name *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={className}
+                      onChange={(e) => setClassName(e.target.value)}
+                      placeholder="e.g., 10th, XII"
+                      className="w-full px-4 py-3 bg-gradient-to-br from-white to-purple-50/30 border-2 border-gray-300 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all shadow-sm"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Section (Optional)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={section}
+                      onChange={(e) => setSection(e.target.value)}
+                      placeholder="e.g., A, B (leave blank for all)"
+                      className="w-full px-4 py-3 bg-gradient-to-br from-white to-purple-50/30 border-2 border-gray-300 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all shadow-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={handleGenerateByClass}
+                disabled={isLoadingClass}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+              >
+                <GraduationCap size={20} />
+                Generate by Class
               </button>
             </div>
           </div>
@@ -399,8 +479,8 @@ const handleGenerateIdcard = async () => {
                 <div className="flex gap-3">
                   <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">2</div>
                   <div>
-                    <p className="font-semibold text-gray-800 mb-1">Enter Serial Range</p>
-                    <p className="text-sm text-gray-600">Specify the serial number range you want to search</p>
+                    <p className="font-semibold text-gray-800 mb-1">Search Cards</p>
+                    <p className="text-sm text-gray-600">Use serial range or class/section to generate ID cards</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -449,7 +529,7 @@ const handleGenerateIdcard = async () => {
         </div>
       )}
 
-      {/* Enhanced Result Modal */}
+      {/* Enhanced Result Modal (Serial Number) */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-full relative border-2 border-emerald-200">
@@ -488,6 +568,56 @@ const handleGenerateIdcard = async () => {
             <button
               onClick={handleDownload}
               className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold py-4 rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
+            >
+              <Download size={22} />
+              Download ID Cards
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* NEW: Class/Section Result Modal */}
+      {showClassModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-full relative border-2 border-purple-200">
+            <button
+              onClick={() => setShowClassModal(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            >
+              <X className="text-gray-600" size={22} />
+            </button>
+
+            <div className="text-center mb-8">
+              <div className="inline-flex p-5 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl mb-4 shadow-lg">
+                <GraduationCap className="text-white" size={52} />
+              </div>
+              <h3 className="text-3xl font-bold text-gray-800 mb-3">
+                ID Cards Generated!
+              </h3>
+              <p className="text-gray-600 text-lg">
+                Generated ID cards for <span className="text-purple-600 font-bold">Class {className}</span>
+                {section && <> - <span className="text-purple-600 font-bold">Section {section}</span></>}
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-5 mb-6">
+              <div className="flex justify-between mb-3">
+                <span className="text-gray-700 font-semibold">Class:</span>
+                <span className="text-gray-900 font-bold text-lg">{className}</span>
+              </div>
+              <div className="flex justify-between mb-3">
+                <span className="text-gray-700 font-semibold">Section:</span>
+                <span className="text-gray-900 font-bold text-lg">{section || "All"}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-700 font-semibold">Format:</span>
+                <span className="text-gray-900 font-bold text-lg">PDF</span>
+              </div>
+            </div>
+
+            <button
+              onClick={handleDownloadByClass}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
             >
               <Download size={22} />
               Download ID Cards

@@ -9,12 +9,14 @@ import {
   TrendingUp,
   Settings,
   Sparkles,
+  Edit,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { getAllFeeStructures } from "../../api/feeStructure.js";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { getAllFeeStructures } from "../../../../api/feeStructure.js";
+
 
 /* ================= CARD ================= */
-const FeeStructureCard = ({ classInfo }) => {
+const FeeStructureCard = ({ classInfo, onEdit }) => {
   const calculateTotal = (items) =>
     items.reduce((sum, item) => {
       if (item.frequency === "Monthly") return sum + item.amount * 12;
@@ -71,6 +73,13 @@ const FeeStructureCard = ({ classInfo }) => {
               <p className="text-white/80 text-xs mt-0.5">{classInfo.items.length} Components</p>
             </div>
           </div>
+          <button
+            onClick={() => onEdit(classInfo.class)}
+            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-lg transition-all hover:scale-110 border border-white/30"
+            title="Edit Fee Structure"
+          >
+            <Edit className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
@@ -139,6 +148,7 @@ export default function SchoolFeeStructure() {
   const [searchTerm, setSearchTerm] = useState("");
   const [feeCards, setFeeCards] = useState([]);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const loadFeeStructure = async () => {
     try {
@@ -184,6 +194,20 @@ export default function SchoolFeeStructure() {
     loadFeeStructure();
   }, []);
 
+  // Auto-reload when coming back from edit/create
+  useEffect(() => {
+    const refresh = searchParams.get('refresh');
+    if (refresh === 'true') {
+      loadFeeStructure();
+      // Clean up the URL
+      navigate('/fee-structure', { replace: true });
+    }
+  }, [searchParams]);
+
+ const handleEdit = (className) => {
+  navigate(`/sms/fee-settings?edit=${className}`);
+};
+
   const filteredFees = feeCards.filter((fee) =>
     fee.class.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -203,13 +227,14 @@ export default function SchoolFeeStructure() {
               </h1>
               <p className="text-gray-600 text-lg">View and manage fee structures for all classes</p>
             </div>
-            <button
-              onClick={() => navigate("/?tab=fee-settings")}
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 group"
-            >
-              <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-              Fee Settings
-            </button>
+           <button
+  onClick={() => navigate("/sms/fee-settings")}
+  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 group"
+>
+  <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+  Fee Settings
+</button>
+
           </div>
 
           {/* Search Bar */}
@@ -235,7 +260,7 @@ export default function SchoolFeeStructure() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredFees.map((fee, i) => (
-            <FeeStructureCard key={i} classInfo={fee} />
+            <FeeStructureCard key={i} classInfo={fee} onEdit={handleEdit} />
           ))}
         </div>
 

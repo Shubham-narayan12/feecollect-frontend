@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { students } from "../../Data/students";
-import { feeRecords } from "../../Data/fees";
+import { students } from "../../../../Data/students";
+import { feeRecords } from "../../../../Data/fees";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,

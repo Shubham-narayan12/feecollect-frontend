@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
-import { logoutAdmin } from "../../api/adminApi";
+import { logoutAdmin } from "../../../../api/adminApi";
 
 export default function Header() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);

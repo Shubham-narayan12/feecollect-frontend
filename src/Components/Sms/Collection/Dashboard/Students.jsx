@@ -3,21 +3,20 @@ import {
   loadStudents,
   saveStudents,
   updateStudent,
-} from "../../Data/studentStorage";
+} from "../../../../Data/studentStorage";
 import { useNavigate } from "react-router-dom";
 
-import { bulkApply, getAllStudent } from "../../api/studentApi.js";
+import { bulkApply, getAllStudent } from "../../../../api/studentApi.js";
 import { toast } from "react-toastify";
 import StudentIDCard from "../Students/StudentIDCard";
 import StudentInfoModal from "../Students/StudentInfoModal";
-
 
 export default function Students() {
   const navigate = useNavigate();
 
   const [students, setStudents] = useState([]);
   const [editing, setEditing] = useState(null);
-const [showIDCard, setShowIDCard] = useState(null);
+  const [showIDCard, setShowIDCard] = useState(null);
 
   // Table hidden initially
   const [showTable, setShowTable] = useState(false);
@@ -26,7 +25,7 @@ const [showIDCard, setShowIDCard] = useState(null);
   const [cls, setCls] = useState("");
   const [section, setSection] = useState("");
   const [session, setSession] = useState("");
-  const [rollNo, setRollNo] = useState(""); // 👈 NEW: Roll Number filter
+  const [rollNo, setRollNo] = useState("");
 
   // Search bar
   const [search, setSearch] = useState("");
@@ -70,7 +69,7 @@ const [showIDCard, setShowIDCard] = useState(null);
       if (cls && s.className !== cls) return false;
       if (section && s.section !== section) return false;
       if (session && s.session !== session) return false;
-      if (rollNo && s.rollNo?.toString() !== rollNo) return false; // 👈 NEW: Roll number exact match filter
+      if (rollNo && s.rollNo?.toString() !== rollNo) return false;
 
       if (search) {
         const term = search.toLowerCase();
@@ -87,7 +86,7 @@ const [showIDCard, setShowIDCard] = useState(null);
 
       return true;
     });
-  }, [students, cls, section, session, rollNo, search]); // 👈 Added rollNo dependency
+  }, [students, cls, section, session, rollNo, search]);
 
   // Save editing
   function handleEditSave() {
@@ -106,12 +105,12 @@ const [showIDCard, setShowIDCard] = useState(null);
     setCls("");
     setSection("");
     setSession("");
-    setRollNo(""); // 👈 NEW: Reset roll number
+    setRollNo("");
     setSearch("");
     setShowTable(false);
   }
 
-  // ⭐ BACKEND-INTEGRATED BULK IMPORT (WITH DETAILED TOAST)
+  // BULK IMPORT
   async function handleExcelUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -125,10 +124,7 @@ const [showIDCard, setShowIDCard] = useState(null);
 
       if (data.success) {
         toast.success(
-          `✅ Bulk Upload Done
-Inserted: ${data.inserted}
-Skipped: ${data.skipped}
-Total Rows: ${data.totalRows}`,
+          `✅ Bulk Upload Done\nInserted: ${data.inserted}\nSkipped: ${data.skipped}\nTotal Rows: ${data.totalRows}`,
           { autoClose: 6000 }
         );
         await fetchStudents();
@@ -170,8 +166,9 @@ Total Rows: ${data.totalRows}`,
             </div>
 
             <div className="flex gap-3 flex-wrap">
+              {/* ✅ FIXED: Changed from /?tab=admission to /sms/admission */}
               <button
-                onClick={() => navigate("/?tab=admission")}
+                onClick={() => navigate("/sms/admission")}
                 className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-semibold flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -272,7 +269,7 @@ Total Rows: ${data.totalRows}`,
               />
             </div>
 
-            {/* DROPDOWN FILTERS - NOW 4 COLUMNS WITH ROLL NUMBER */}
+            {/* DROPDOWN FILTERS */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Class</label>
@@ -316,7 +313,6 @@ Total Rows: ${data.totalRows}`,
                 </select>
               </div>
 
-              {/* 👇 NEW: Roll Number Filter Input */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Roll Number</label>
                 <input
@@ -440,32 +436,29 @@ Total Rows: ${data.totalRows}`,
                         </td>
 
                         <td className="py-4 px-4">
-                         <div className="flex gap-2 flex-wrap">
-  {/* FEE */}
-  <button
-    onClick={() => navigate(`/?tab=fee-collection&student=${s._id}`)}
-    className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-xs font-semibold"
-  >
-    Fee
-  </button>
+                          <div className="flex gap-2 flex-wrap">
+                            {/* ✅ FIXED: Changed from /?tab=fee-collection to /sms/fee-collection */}
+                            <button
+                              onClick={() =>navigate(`/sms/fee-collection?student=${s._id}`)}
+                              className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-xs font-semibold"
+                            >
+                              Fee
+                            </button>
 
-  {/* EDIT */}
-  <button
-    onClick={() => setEditing(s)}
-    className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-semibold"
-  >
-    Edit
-  </button>
+                            <button
+                              onClick={() => setEditing(s)}
+                              className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-semibold"
+                            >
+                              Edit
+                            </button>
 
-  {/* ID CARD */}
-  <button
-    onClick={() => setShowIDCard(s)}
-    className="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-xs font-semibold"
-  >
-    ID Card
-  </button>
-</div>
-
+                            <button
+                              onClick={() => setShowIDCard(s)}
+                              className="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-xs font-semibold"
+                            >
+                              ID Card
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))

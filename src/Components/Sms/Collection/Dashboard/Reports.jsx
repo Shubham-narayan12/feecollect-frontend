@@ -1,5 +1,5 @@
 import React from "react";
-import { feeRecords } from "../../Data/fees";
+import { feeRecords } from "../../../../Data/fees";
 import jsPDF from "jspdf";
 
 export default function Reports() {

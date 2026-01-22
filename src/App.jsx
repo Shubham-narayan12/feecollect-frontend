@@ -8,34 +8,32 @@ import {
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-/* Pages & Components */
-import AdminDashboard from "./Pages/AdminDashboard";
+/* 🌐 Public School UI */
+import SchoolHome from "./Pages/SchoolHome";
+
+/* 🔐 Admin Pages */
 import LoginPage from "./Pages/LoginPage";
-import FeeCollection from "./Pages/FeeCollection";
-import FeeSettings from "./Pages/FeeSettings";
-import SchoolFeeStructure from "./Components/Dashboard/Fees";
+import AdminDashboard from "./Pages/AdminDashboard";
 
 /* 🔐 Protected Route */
 function ProtectedRoute({ children }) {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
 export default function App() {
   return (
     <Router>
       <Routes>
-        {/* 🔓 Public Route */}
+        {/* 🌐 SCHOOL WEBSITE */}
+        <Route path="/" element={<SchoolHome />} />
+
+        {/* 🔓 LOGIN */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* 🏠 Dashboard */}
+        {/* 🏠 SMS DASHBOARD (with nested routes) */}
         <Route
-          path="/"
+          path="/sms/*"
           element={
             <ProtectedRoute>
               <AdminDashboard />
@@ -43,43 +41,11 @@ export default function App() {
           }
         />
 
-        {/* 📊 Fee Structure */}
-        <Route
-          path="/fees"
-          element={
-            <ProtectedRoute>
-              <SchoolFeeStructure />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* 💰 Fee Collection */}
-        <Route
-          path="/fee-collection"
-          element={
-            <ProtectedRoute>
-              <FeeCollection />
-            </ProtectedRoute>
-          }
-        />
-
-      
-
-        {/* 🚫 Fallback */}
+        {/* 🚫 FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {/* 🔔 Toast Notifications */}
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="colored"
-      />
+      <ToastContainer position="top-right" autoClose={5000} theme="colored" />
     </Router>
   );
 }

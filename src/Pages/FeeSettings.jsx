@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createFeeStructure } from "../api/feeStructure.js";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { createFeeStructure, getAllFeeStructures, updateFeeStructure } from "../api/feeStructure.js";
 import { toast } from "react-toastify";
 import {
   DollarSign,
@@ -13,6 +13,7 @@ import {
   Save,
   ArrowLeft,
   Sparkles,
+  Edit,
 } from "lucide-react";
 
 const CLASSES = [
@@ -23,6 +24,8 @@ const CLASSES = [
 
 export default function FeeSettings() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editClass = searchParams.get('edit');
 
   const [form, setForm] = useState({
     className: "",
@@ -36,6 +39,40 @@ export default function FeeSettings() {
 
   const [extraTitle, setExtraTitle] = useState("");
   const [extraAmount, setExtraAmount] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [feeStructureId, setFeeStructureId] = useState(null);
+
+  /* ================= LOAD EXISTING DATA FOR EDIT ================= */
+  useEffect(() => {
+    if (editClass) {
+      loadFeeStructureForEdit(editClass);
+    }
+  }, [editClass]);
+
+  const loadFeeStructureForEdit = async (className) => {
+    try {
+      const res = await getAllFeeStructures();
+      const feeStructure = res.data.data.find(fs => fs.className === className);
+      
+      if (feeStructure) {
+        setForm({
+          className: feeStructure.className,
+          admissionFee: feeStructure.admissionFee.toString(),
+          tuitionFee: feeStructure.tuitionFee.toString(),
+          annualFee: feeStructure.annualFee.toString(),
+          examFee: feeStructure.examFee.toString(),
+          transportFee: feeStructure.transportFee.toString(),
+          extraFees: feeStructure.extraFees || [],
+        });
+        setIsEditMode(true);
+        setFeeStructureId(feeStructure._id);
+        toast.info(`Editing fee structure for Class ${className}`);
+      }
+    } catch (error) {
+      toast.error("Failed to load fee structure for editing");
+      console.error(error);
+    }
+  };
 
   /* ================= BASIC INPUT ================= */
   const handleChange = (e) => {
@@ -86,8 +123,13 @@ export default function FeeSettings() {
         extraFees: form.extraFees,
       };
 
-      await createFeeStructure(payload);
-      toast.success("Fee Structure Created Successfully");
+      if (isEditMode && feeStructureId) {
+        await updateFeeStructure(feeStructureId, payload);
+        toast.success("Fee Structure Updated Successfully");
+      } else {
+        await createFeeStructure(payload);
+        toast.success("Fee Structure Created Successfully");
+      }
 
       setForm({
         className: "",
@@ -98,6 +140,11 @@ export default function FeeSettings() {
         transportFee: "",
         extraFees: [],
       });
+      setIsEditMode(false);
+      setFeeStructureId(null);
+      
+      // Navigate back to fee structure page with refresh flag
+      navigate("/fee-structure?refresh=true");
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
@@ -141,12 +188,16 @@ export default function FeeSettings() {
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-2xl shadow-lg">
-                <GraduationCap className="w-8 h-8 text-white" />
+              <div className={`bg-gradient-to-br ${isEditMode ? 'from-orange-500 to-red-600' : 'from-indigo-500 to-purple-600'} p-3 rounded-2xl shadow-lg`}>
+                {isEditMode ? <Edit className="w-8 h-8 text-white" /> : <GraduationCap className="w-8 h-8 text-white" />}
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-gray-900">Fee Structure Settings</h2>
-                <p className="text-gray-600 text-sm mt-1">Configure fee structure for each class</p>
+                <h2 className="text-3xl font-bold text-gray-900">
+                  {isEditMode ? 'Edit' : 'Create'} Fee Structure
+                </h2>
+                <p className="text-gray-600 text-sm mt-1">
+                  {isEditMode ? `Updating fee structure for Class ${form.className}` : 'Configure fee structure for each class'}
+                </p>
               </div>
             </div>
             <button
@@ -171,13 +222,20 @@ export default function FeeSettings() {
               name="className"
               value={form.className}
               onChange={handleChange}
-              className="w-full border-2 border-gray-200 bg-gray-50 p-3 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all text-lg font-medium"
+              disabled={isEditMode}
+              className={`w-full border-2 border-gray-200 bg-gray-50 p-3 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all text-lg font-medium ${isEditMode ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
               <option value="">Choose a class</option>
               {CLASSES.map((c) => (
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
+            {isEditMode && (
+              <p className="text-sm text-orange-600 mt-2 flex items-center gap-1">
+                <Edit className="w-4 h-4" />
+                Class cannot be changed while editing
+              </p>
+            )}
           </div>
 
           {/* FEES */}
@@ -272,10 +330,10 @@ export default function FeeSettings() {
           {/* SUBMIT */}
           <button
             onClick={handleSubmit}
-            className="mt-8 w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 group"
+            className={`mt-8 w-full ${isEditMode ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700' : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'} text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 group`}
           >
-            <Save className="w-6 h-6 group-hover:scale-110 transition-transform" />
-            Save Fee Structure
+            {isEditMode ? <Edit className="w-6 h-6 group-hover:scale-110 transition-transform" /> : <Save className="w-6 h-6 group-hover:scale-110 transition-transform" />}
+            {isEditMode ? 'Update Fee Structure' : 'Save Fee Structure'}
           </button>
         </div>
       </div>
