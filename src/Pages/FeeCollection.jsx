@@ -9,6 +9,7 @@ import { searchStudentById } from "../api/studentApi";
 import { feecollect } from "../api/feeLedgerApi";
 import { getAllFeeStructures } from "../api/feeStructure.js";
 import { getFeeStructureByClass } from "../api/feeStructure.js";
+import { generateFeeReceipt, downloadReceiptPdf } from "../api/receiptApi.js";
 
 // Import child components from Components/Collection/
 import { StudentInfoCard } from "../Components/Collection/StudentInfoCard";
@@ -65,7 +66,7 @@ const calculateLateFine = (month, student) => {
   const monthStartDate = new Date(
     monthYear,
     monthIndex >= 9 ? monthIndex - 9 : monthIndex + 3,
-    1
+    1,
   );
 
   if (admissionDate) {
@@ -91,7 +92,7 @@ const calculateLateFine = (month, student) => {
       }
 
       const lateDays = Math.floor(
-        (currentDate - dueDate) / (1000 * 60 * 60 * 24)
+        (currentDate - dueDate) / (1000 * 60 * 60 * 24),
       );
 
       if (lateDays > 0) {
@@ -113,7 +114,7 @@ const calculateLateFine = (month, student) => {
   const dueDate = new Date(
     monthYear,
     monthIndex >= 9 ? monthIndex - 9 : monthIndex + 3,
-    10
+    10,
   );
   const lateDays = Math.floor((currentDate - dueDate) / (1000 * 60 * 60 * 24));
 
@@ -308,7 +309,7 @@ export default function FeeCollection() {
   const lateFines = getLateFines();
   const totalLateFine = lateFines.reduce(
     (sum, lf) => sum + lf.lateFineAmount,
-    0
+    0,
   );
 
   // Calculate totals
@@ -328,7 +329,7 @@ export default function FeeCollection() {
   useEffect(() => {
     if (totalLateFine > 0) {
       const lateFineExists = extraFees.some(
-        (fee) => fee.title === "Late Fine (Auto-calculated)"
+        (fee) => fee.title === "Late Fine (Auto-calculated)",
       );
 
       if (lateFineExists) {
@@ -336,8 +337,8 @@ export default function FeeCollection() {
           prev.map((fee) =>
             fee.title === "Late Fine (Auto-calculated)"
               ? { ...fee, amount: totalLateFine }
-              : fee
-          )
+              : fee,
+          ),
         );
       } else {
         setExtraFees((prev) => [
@@ -351,7 +352,7 @@ export default function FeeCollection() {
       }
     } else {
       setExtraFees((prev) =>
-        prev.filter((fee) => fee.title !== "Late Fine (Auto-calculated)")
+        prev.filter((fee) => fee.title !== "Late Fine (Auto-calculated)"),
       );
     }
   }, [totalLateFine]);
@@ -383,10 +384,11 @@ export default function FeeCollection() {
     async function loadMasterFee() {
       try {
         if (!student?.className) return;
-        console.log(student.className)
+        console.log(student.className);
 
-        const res = await getFeeStructureByClass({className:student.className});
-        
+        const res = await getFeeStructureByClass({
+          className: student.className,
+        });
 
         setMasterFee(res.data.structure || null);
       } catch (error) {
@@ -403,7 +405,7 @@ export default function FeeCollection() {
     try {
       const res = await getAllFeeStructures();
       const feeStructure = res.data.data.find(
-        (fs) => fs.className === className
+        (fs) => fs.className === className,
       );
 
       if (feeStructure) {
@@ -535,6 +537,9 @@ export default function FeeCollection() {
       };
 
       await feecollect(payload);
+      const res = await generateFeeReceipt(payload);
+      const fileName = res.recipt.fileName;
+      await downloadReceiptPdf(fileName);
 
       alert("✅ Fee Collected & Ledger Updated");
       navigate(`/?tab=payment-history&student=${student._id}`);
@@ -577,7 +582,7 @@ export default function FeeCollection() {
     "border border-gray-300 rounded-lg px-4 py-2.5 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
 
   const selectedMonthsCount = Object.keys(monthlyFees).filter(
-    (m) => monthlyFees[m]
+    (m) => monthlyFees[m],
   ).length;
 
   return (
