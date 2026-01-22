@@ -25,3 +25,6 @@ export const updateFeeStructure = async (id, updatedData) => {
 export const deleteFeeStructure = async (id) => {
   return axiosInstance.delete(`/feestructure/${id}`);
 };
+
+
+  
