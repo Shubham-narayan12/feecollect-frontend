@@ -1,31 +1,20 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import AdminHeader from "../Components/Dashboard/Header";
-import AdminSidebar from "../Components/Dashboard/Sidebar";
+import AdminHeader from "../Components/Sms/Collection/Dashboard/Header";
+import AdminSidebar from "../Components/Sms/Collection/Dashboard/Sidebar";
 
-import DashboardHome from "../Components/Dashboard/DashboardHome";
-import Students from "../Components/Dashboard/Students";
-import Reports from "../Components/Dashboard/Reports";
-import AdmissionForm from "../Components/Dashboard/AdmissionForm";
+import DashboardHome from "../Components/Sms/Collection/Dashboard/DashboardHome";
+import Students from "../Components/Sms/Collection/Dashboard/Students";
+import Reports from "../Components/Sms/Collection/Dashboard/Reports";
+import AdmissionForm from "../Components/Sms/Collection/Dashboard/AdmissionForm";
 import FeeCollection from "./FeeCollection";
-import PaymentHistory from "../Components/Dashboard/PaymentHistory";
-
-import SchoolFeeStructure from "../Components/Dashboard/Fees";
+import PaymentHistory from "../Components/Sms/Collection/Dashboard/PaymentHistory";
+import SchoolFeeStructure from "../Components/Sms/Collection/Dashboard/Fees";
 import FeeSettings from "../Pages/FeeSettings";
 import AdminProfile from "../Pages/AdminProfile";
-import IDCardComponent from "../Components/Dashboard/IDCardComponent";
-
+import IDCardComponent from "../Components/Sms/Collection/Dashboard/IDCardComponent";
 
 export default function AdminDashboard() {
-  const location = useLocation();
-  const [tab, setTab] = useState("dashboard");
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    setTab(params.get("tab") || "dashboard");
-  }, [location.search]);
-
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -40,19 +29,23 @@ export default function AdminDashboard() {
 
         {/* Scrollable Content */}
         <main className="flex-1 overflow-y-auto bg-gray-100 p-5">
-          {tab === "dashboard" && <DashboardHome />}
-          {tab === "students" && <Students />}
-          {tab === "fees" && <SchoolFeeStructure />}
-          {tab === "fee-settings" && <FeeSettings />}
-          {tab === "fee-collection" && <FeeCollection />}
-          {tab === "payment-history" && <PaymentHistory />}
-          {tab === "reports" && <Reports />}
-          {tab === "admission" && <AdmissionForm />}
-          {tab === "profile" && <AdminProfile />}
-          {tab === "id-cards" && <IDCardComponent />}
+          <Routes>
+            <Route path="dashboard" element={<DashboardHome />} />
+            <Route path="students" element={<Students />} />
+            <Route path="fees" element={<SchoolFeeStructure />} />
+            <Route path="fee-settings" element={<FeeSettings />} />
+            <Route path="fee-collection" element={<FeeCollection />} />
+            <Route path="payment-history" element={<PaymentHistory />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="admission" element={<AdmissionForm />} />
+            <Route path="profile" element={<AdminProfile />} />
+            <Route path="id-cards" element={<IDCardComponent />} />
+
+            {/* Redirect /sms to /sms/dashboard */}
+            <Route path="" element={<Navigate to="dashboard" replace />} />
+          </Routes>
         </main>
       </div>
     </div>
   );
 }
-
