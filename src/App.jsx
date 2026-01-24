@@ -9,6 +9,8 @@ import {
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import ScrollToTop from "./Components/ScrollToTop";
+
 /* 🌐 Public School UI */
 import SchoolHome from "./Pages/SchoolHome";
 import SchoolAboutUs from "./Pages/SchoolAboutUs";
@@ -47,6 +49,8 @@ function PublicLayout() {
 export default function App() {
   return (
     <Router>
+      <ScrollToTop />
+
       <Routes>
         {/* 🌐 PUBLIC WEBSITE WITH NAVBAR & FOOTER */}
         <Route element={<PublicLayout />}>
@@ -55,17 +59,17 @@ export default function App() {
           <Route path="/contact" element={<SchoolContactPage />} />
           <Route path="/GalleryPage" element={<GalleryPage />} />
           <Route path="/enquiry" element={<EnquiryPage />} />
-          
+
           {/* 👥 Our Team Routes */}
           <Route path="/team/director" element={<DirectorDesk />} />
           <Route path="/team/principal" element={<PrincipalDesk />} />
           <Route path="/team/faculties" element={<Faculties />} />
         </Route>
 
-        {/* 🔓 LOGIN (NO NAVBAR/FOOTER) */}
+        {/* 🔓 LOGIN */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* 🏠 SMS DASHBOARD (NO NAVBAR/FOOTER) */}
+        {/* 🔐 PROTECTED SMS DASHBOARD */}
         <Route
           path="/sms/*"
           element={

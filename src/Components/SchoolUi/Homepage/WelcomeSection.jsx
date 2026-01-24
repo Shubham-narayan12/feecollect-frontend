@@ -52,21 +52,17 @@ export default function WelcomeSection() {
       }}
     >
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
-
         {/* LEFT CONTENT */}
         <div>
-          <p className="text-red-600 font-medium mb-3">
-            Warm Welcome To
-          </p>
+          <p className="text-red-600 font-medium mb-3">Warm Welcome To</p>
 
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6 leading-tight">
-            GREEN FIELD SCHOOL{" "}
-            <span className="text-orange-500">PATNA</span>
+            THAWE CENTRAL SCHOOL <span className="text-orange-500">PATNA</span>
           </h2>
 
           <div className="space-y-5 text-gray-700 leading-relaxed">
             <p>
-              At Green Field School Patna, we are committed to nurturing young
+              At Thawe Central School Patna, we are committed to nurturing young
               minds and shaping them into confident, responsible and
               compassionate global citizens.
             </p>
@@ -110,7 +106,6 @@ export default function WelcomeSection() {
             ))}
           </div>
         </div>
-
       </div>
     </section>
   );

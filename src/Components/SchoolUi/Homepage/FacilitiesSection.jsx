@@ -109,7 +109,7 @@ export default function FacilitiesSection() {
             FACILITIES
           </h2>
           <p className="text-gray-600 text-lg max-w-4xl leading-relaxed mb-6">
-            At Delhi Public School Patna, education transcends academics, creating an exciting, caring and supportive space where students thrive and all-round development takes centre stage.
+            At Thawe Central School, education transcends academics, creating an exciting, caring and supportive space where students thrive and all-round development takes centre stage.
           </p>
           <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-md shadow-lg transition-all duration-300 flex items-center gap-2 group">
             View All

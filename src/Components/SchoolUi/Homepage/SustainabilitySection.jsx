@@ -61,37 +61,49 @@ export default function SustainabilitySection() {
   ];
 
   const content = {
-    khadi: {
-      title: 'Khadi - From Loom to Learning',
-      description: 'At DPS Patna, we proudly promote sustainability, patriotism, and cultural legacy. By embracing Khadi–India\'s symbol of self-reliance and simplicity–we instill values of unity, determination, and environmental responsibility in our students. As an eco-friendly, hand-spun fabric supporting local artisans, Khadi reflects our commitment to conscious living. Through its use in uniforms and events, we blend tradition with modernity, inspiring students to cherish heritage and work toward a sustainable future.',
-      image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600'
-    },
-    climate: {
-      title: 'Climate Change - Awareness & Action',
-      description: 'We educate our students about climate change through workshops, seminars, and hands-on activities. Our curriculum integrates environmental science, encouraging students to understand global warming, carbon footprint, and sustainable practices.',
-      image: 'https://images.unsplash.com/photo-1569163139394-de4798aa62b0?w=600'
-    },
-    forest: {
-      title: 'School Forest - Beyond Books, Beneath the Canopy',
-      description: 'Our school forest serves as an outdoor classroom where students learn about biodiversity, ecology, and conservation. This green sanctuary provides a hands-on learning environment.',
-      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600'
-    },
-    solar: {
-      title: 'Solar Energy - Sun-powered Learning',
-      description: 'DPS Patna harnesses solar energy to power our facilities, demonstrating renewable energy in action. Our solar panels serve as educational tools for teaching clean energy.',
-      image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600'
-    },
-    zerowaste: {
-      title: 'Zero Waste - Reduce Your Consumption',
-      description: 'We practice zero waste principles through recycling programs, composting initiatives, and waste segregation. Students learn to reduce, reuse, and recycle.',
-      image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600'
-    },
-    millets: {
-      title: 'Millets - Tiny Grains, Mighty Gains',
-      description: 'We promote millets as a sustainable and nutritious food choice. Our cafeteria incorporates millet-based meals, teaching students about traditional grains and their health benefits.',
-      image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600'
-    }
-  };
+  khadi: {
+    title: 'Khadi - From Loom to Learning',
+    description:
+      "At Thawe Central School, we proudly promote sustainability, patriotism, and cultural legacy. By embracing Khadi–India's symbol of self-reliance and simplicity–we instill values of unity, determination, and environmental responsibility in our students. As an eco-friendly, hand-spun fabric supporting local artisans, Khadi reflects our commitment to conscious living. Through its use in uniforms and events, we blend tradition with modernity, inspiring students to cherish heritage and work toward a sustainable future.",
+    image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600'
+  },
+
+  climate: {
+    title: 'Climate Change - Awareness & Action',
+    description:
+      'We educate our students about climate change through workshops, seminars, and hands-on activities. Our curriculum integrates environmental science, encouraging students to understand global warming, carbon footprint, and sustainable practices.',
+    image: 'https://images.unsplash.com/photo-1569163139394-de4798aa62b0?w=600'
+  },
+
+  forest: {
+    title: 'School Forest - Beyond Books, Beneath the Canopy',
+    description:
+      'Our school forest serves as an outdoor classroom where students learn about biodiversity, ecology, and conservation. This green sanctuary provides a hands-on learning environment.',
+    image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600'
+  },
+
+  solar: {
+    title: 'Solar Energy - Sun-powered Learning',
+    description:
+      'Thawe Central School harnesses solar energy to power our facilities, demonstrating renewable energy in action. Our solar panels serve as educational tools for teaching clean energy.',
+    image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600'
+  },
+
+  zerowaste: {
+    title: 'Zero Waste - Reduce Your Consumption',
+    description:
+      'We practice zero waste principles through recycling programs, composting initiatives, and waste segregation. Students learn to reduce, reuse, and recycle.',
+    image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600'
+  },
+
+  millets: {
+    title: 'Millets - Tiny Grains, Mighty Gains',
+    description:
+      'We promote millets as a sustainable and nutritious food choice. Our cafeteria incorporates millet-based meals, teaching students about traditional grains and their health benefits.',
+    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600'
+  }
+};
+
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
