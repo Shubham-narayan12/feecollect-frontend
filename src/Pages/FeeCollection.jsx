@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Pencil, Trash2, X, Save, Plus } from "lucide-react";
+import { toast } from "react-toastify";
 
 // API imports
 import { searchStudentById } from "../api/studentApi";
@@ -818,7 +819,7 @@ export default function FeeCollection() {
           transportFee: v.transportFee || 0,
         }));
 
-      const payload = {
+      const commonPayload = {
         studentId: student._id,
         admissionFee,
         annualFee,
@@ -836,17 +837,51 @@ export default function FeeCollection() {
               }
             : null,
         paidAmount,
+        paymentMode: "Cash",
       };
 
-      await feecollect(payload);
-      const res = await generateFeeReceipt(payload);
-      const fileName = res.recipt.fileName;
+      // 🔹 1️⃣ Fee Collect
+      toast.loading("Collecting fee...", { toastId: "fee" });
+      await feecollect(commonPayload);
+
+      toast.update("fee", {
+        render: "Fee collected successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+
+      // 🔹 2️⃣ Generate Receipt
+      toast.loading("Generating receipt...", { toastId: "receipt" });
+      const res = await generateFeeReceipt(commonPayload);
+
+      const fileName = res?.data?.receipt?.fileName || res?.recipt?.fileName;
+      if (!fileName) throw new Error("Receipt file not generated");
+
+      toast.update("receipt", {
+        render: "Receipt generated",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+
+      // 🔹 3️⃣ Download PDF
+      toast.loading("Downloading receipt...", { toastId: "download" });
       await downloadReceiptPdf(fileName);
 
-      alert("✅ Fee Collected & Ledger Updated");
+      toast.update("download", {
+        render: "Receipt downloaded",
+        type: "success",
+        isLoading: false,
+        autoClose: 1500,
+      });
+
       navigate(`/sms/payment-history?student=${student._id}`);
     } catch (err) {
-      alert(err?.response?.data?.message || "Fee Collection Failed");
+      console.error(err);
+      toast.error(
+        err?.response?.data?.message || err.message || "Fee collection failed",
+      );
     }
   };
 
