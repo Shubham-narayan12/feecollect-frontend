@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 
 const images = [
-  "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=900&q=80",
+  "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=580,fit=crop/dOqNXeekPrHE45km/tsc-school-1---copy-AGBvZob37oSBNpvr.jpg",
+  "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=580,fit=crop/dOqNXeekPrHE45km/tcs-logo-trans-12---copy-2-m2Wrv599agteQ3z1.png",
+  "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=580,fit=crop/dOqNXeekPrHE45km/tcs-adv-mk35enRKEBIBwVon.jpeg",
 ];
 
 export default function WelcomeSection() {
@@ -57,12 +57,13 @@ export default function WelcomeSection() {
           <p className="text-red-600 font-medium mb-3">Warm Welcome To</p>
 
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6 leading-tight">
-            THAWE CENTRAL SCHOOL <span className="text-orange-500">PATNA</span>
+            Thawe Central School{" "}
+            <span className="text-orange-500">Gopalganj</span>
           </h2>
 
           <div className="space-y-5 text-gray-700 leading-relaxed">
             <p>
-              At Thawe Central School Patna, we are committed to nurturing young
+              At Thawe Central School Gopalganj, we are committed to nurturing young
               minds and shaping them into confident, responsible and
               compassionate global citizens.
             </p>

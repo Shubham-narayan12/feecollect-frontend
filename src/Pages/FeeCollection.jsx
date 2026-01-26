@@ -1062,26 +1062,7 @@ export default function FeeCollection() {
               />
             </CollapsibleSection>
 
-            <CollapsibleSection
-              id="payment"
-              title="Payment Amount"
-              icon="💵"
-              isOpen={openSections.payment}
-              toggleSection={toggleSection}
-              badge={
-                paidAmount > 0 ? `₹${Number(paidAmount).toFixed(2)}` : null
-              }
-            >
-              <div className="max-w-md">
-                <input
-                  type="number"
-                  placeholder="Enter amount paid by student"
-                  className={inputClass + " text-lg font-semibold"}
-                  value={paidAmount}
-                  onChange={(e) => setPaidAmount(e.target.value)}
-                />
-              </div>
-            </CollapsibleSection>
+            
 
             <CollapsibleSection
               id="discount"
@@ -1116,9 +1097,31 @@ export default function FeeCollection() {
               badge={`Total: ₹${totals.grandTotal.toFixed(2)}`}
             >
               <FeeBreakdownSummary
-                totals={totals}
-                discountReason={discountReason}
-              />
+  totals={totals}
+  discountReason={discountReason}
+  extraFees={extraFees}  // ← ADD THIS LINE!
+ />
+            </CollapsibleSection>
+
+             <CollapsibleSection
+              id="payment"
+              title="Payment Amount"
+              icon="💵"
+              isOpen={openSections.payment}
+              toggleSection={toggleSection}
+              badge={
+                paidAmount > 0 ? `₹${Number(paidAmount).toFixed(2)}` : null
+              }
+            >
+              <div className="max-w-md">
+                <input
+                  type="number"
+                  placeholder="Enter amount paid by student"
+                  className={inputClass + " text-lg font-semibold"}
+                  value={paidAmount}
+                  onChange={(e) => setPaidAmount(e.target.value)}
+                />
+              </div>
             </CollapsibleSection>
 
             <div className="flex gap-4 justify-end pt-6 border-t-2 border-gray-200 mt-6 sticky bottom-0 bg-white pb-4">

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
 const images = [
-  "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=1600&q=80",
-  "https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?auto=format&fit=crop&w=1600&q=80",
-  "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1600&q=80",
-  "https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=1600&q=80",
+  "https://assets.zyrosite.com/dOqNXeekPrHE45km/thawe-dJoN9M7K8vfDLM2Y.jpg",
+  "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=580,fit=crop/dOqNXeekPrHE45km/tsc-school-1---copy-AGBvZob37oSBNpvr.jpg",
+  "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/computer-lab-school-YanzpDq96oFZ71qO.jpg",
+  "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=580,fit=crop/dOqNXeekPrHE45km/tcs-logo-trans-12---copy-2-m2Wrv599agteQ3z1.png",
 ];
 
 export default function HomeHeroSlider() {
