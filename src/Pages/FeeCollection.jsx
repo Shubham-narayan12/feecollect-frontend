@@ -675,7 +675,6 @@ export default function FeeCollection() {
           {
             title: "Late Fine (Auto-calculated)",
             amount: totalLateFine,
-            isAutoCalculated: true,
           },
         ]);
       }
