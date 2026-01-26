@@ -14,7 +14,7 @@ export default function AdmissionForm() {
     penNo: "",
     className: "",
     section: "",
-    session: "",
+    session: "2026-2027",
     mobile: "",
     gender: "",
     religion: "",
@@ -41,7 +41,19 @@ export default function AdmissionForm() {
   });
 
   function handleInput(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    // Limit Aadhar number to 12 digits
+    if (name === "aadharNo" && value.length > 12) {
+      return;
+    }
+    
+    // Limit PEN number to 12 digits
+    if (name === "penNo" && value.length > 12) {
+      return;
+    }
+    
+    setForm({ ...form, [name]: value });
   }
 
   function handlePhoto(e) {
@@ -89,6 +101,18 @@ export default function AdmissionForm() {
         !form.session
       ) {
         toast.error("Please fill all required fields");
+        return;
+      }
+
+      // Validate Aadhar number (12 digits)
+      if (form.aadharNo && form.aadharNo.length !== 12) {
+        toast.error("Aadhar number must be exactly 12 digits");
+        return;
+      }
+
+      // Validate PEN number (12 digits)
+      if (form.penNo.length !== 12) {
+        toast.error("PEN number must be exactly 12 digits");
         return;
       }
 
@@ -171,7 +195,7 @@ export default function AdmissionForm() {
         penNo: "",
         className: "",
         section: "",
-        session: "",
+        session: "2026-2027",
         mobile: "",
         gender: "",
         religion: "",
@@ -460,17 +484,23 @@ export default function AdmissionForm() {
                 options={["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]}
               />
               <Input
-                label="Aadhar Number"
+                type="number"
+                label="Aadhar Number (12 digits)"
                 name="aadharNo"
                 value={form.aadharNo}
                 onChange={handleInput}
+                placeholder="Enter 12 digit Aadhar"
+                maxLength={12}
                 required
               />
               <Input
-                label="Pen No"
+                type="number"
+                label="PEN No (12 digits)"
                 name="penNo"
                 value={form.penNo}
                 onChange={handleInput}
+                placeholder="Enter 12 digit PEN"
+                maxLength={12}
                 required
               />
             </div>
@@ -500,31 +530,34 @@ export default function AdmissionForm() {
 
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Select
-                label="Session"
-                name="session"
-                value={form.session}
-                onChange={handleInput}
-                options={["2024-25", "2025-26", "2026-27"]}
-                required
-              />
-              <Select
-                label="Transport"
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Session <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="session"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-slate-100 text-slate-700 font-semibold cursor-not-allowed"
+                  value="2026-2027"
+                  readOnly
+                  disabled
+                />
+              </div>
+              
+              <Input
+                label="Transportation"
                 name="transport"
                 value={form.transport}
                 onChange={handleInput}
-                options={[
-                  "Alawalpur | Rs.500",
-                  "City Center | Rs.600",
-                  "No Transport",
-                ]}
+                placeholder="e.g., Alawalpur | Rs.500"
               />
-              <Select
+              
+              <Input
                 label="Vehicle Type"
                 name="vehicle"
                 value={form.vehicle}
                 onChange={handleInput}
-                options={["Bus", "Van", "Auto", "---"]}
+                placeholder="e.g., Bus, Van, Auto"
               />
 
               {/* Photo Upload */}
@@ -591,7 +624,7 @@ export default function AdmissionForm() {
                       <img
                         src={form.fatherPhotoPreview}
                         className="h-24 w-24 rounded-xl object-cover shadow-md"
-                        alt="Student"
+                        alt="Father"
                       />
                     ) : (
                       <div className="text-center py-4">
@@ -635,7 +668,7 @@ export default function AdmissionForm() {
                       <img
                         src={form.motherPhotoPreview}
                         className="h-24 w-24 rounded-xl object-cover shadow-md"
-                        alt="Student"
+                        alt="Mother"
                       />
                     ) : (
                       <div className="text-center py-4">
@@ -704,22 +737,23 @@ export default function AdmissionForm() {
                 options={["No", "Yes"]}
               />
 
-              {/* Description */}
-              <Input
-                label="Benefit Remark / Description"
-                name="feeBenefit.description"
-                value={form.feeBenefit?.description || ""}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    feeBenefit: {
-                      ...form.feeBenefit,
-                      description: e.target.value,
-                    },
-                  })
-                }
-                disabled={!form.feeBenefit?.hasFeeBenefit}
-              />
+              {/* Description - Only show when hasFeeBenefit is true */}
+              {form.feeBenefit?.hasFeeBenefit && (
+                <Input
+                  label="Benefit Remark / Description"
+                  name="feeBenefit.description"
+                  value={form.feeBenefit?.description || ""}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      feeBenefit: {
+                        ...form.feeBenefit,
+                        description: e.target.value,
+                      },
+                    })
+                  }
+                />
+              )}
             </div>
           </div>
         </div>
@@ -818,7 +852,7 @@ export default function AdmissionForm() {
                 penNo: "",
                 className: "",
                 section: "",
-                session: "",
+                session: "2026-2027",
                 mobile: "",
                 gender: "",
                 religion: "",
@@ -882,6 +916,9 @@ function Input({
   onChange,
   type = "text",
   required = false,
+  placeholder = "",
+  maxLength,
+  disabled = false,
 }) {
   return (
     <div>
@@ -891,9 +928,14 @@ function Input({
       <input
         type={type}
         name={name}
-        className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all duration-200 text-slate-700"
+        className={`w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all duration-200 text-slate-700 ${
+          disabled ? "bg-slate-100 cursor-not-allowed" : ""
+        }`}
         value={value}
         onChange={onChange}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        disabled={disabled}
       />
     </div>
   );
@@ -918,44 +960,6 @@ function Select({ label, name, value, onChange, options, required = false }) {
           </option>
         ))}
       </select>
-    </div>
-  );
-}
-
-function DocRadio({ label, name, value, onChange }) {
-  return (
-    <div className="bg-slate-50 p-4 rounded-xl border-2 border-slate-200">
-      <div className="flex items-center justify-between">
-        <span className="font-semibold text-slate-700 text-sm">{label}</span>
-        <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2 cursor-pointer group">
-            <input
-              type="radio"
-              name={name}
-              value="Yes"
-              checked={value === "Yes"}
-              onChange={onChange}
-              className="w-4 h-4 text-emerald-600 cursor-pointer"
-            />
-            <span className="text-sm font-medium text-slate-700 group-hover:text-emerald-600 transition-colors">
-              Yes
-            </span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer group">
-            <input
-              type="radio"
-              name={name}
-              value="No"
-              checked={value === "No"}
-              onChange={onChange}
-              className="w-4 h-4 text-red-600 cursor-pointer"
-            />
-            <span className="text-sm font-medium text-slate-700 group-hover:text-red-600 transition-colors">
-              No
-            </span>
-          </label>
-        </div>
-      </div>
     </div>
   );
 }

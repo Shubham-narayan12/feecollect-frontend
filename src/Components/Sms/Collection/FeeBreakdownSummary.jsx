@@ -1,7 +1,4 @@
-// ============================================
-// 8. FeeBreakdownSummary.jsx
-// ============================================
-export const FeeBreakdownSummary = ({ totals, discountReason }) => {
+export const FeeBreakdownSummary = ({ totals, discountReason, extraFees = [] }) => {
   return (
     <div className="mb-8">
       <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -26,10 +23,31 @@ export const FeeBreakdownSummary = ({ totals, discountReason }) => {
             <span className="text-gray-900 font-semibold">₹{totals.monthlyTotal.toFixed(2)}</span>
           </div>
           
-          <div className="flex justify-between items-center py-2 border-b border-indigo-200">
-            <span className="text-gray-700 font-medium">Additional Fees:</span>
-            <span className="text-gray-900 font-semibold">₹{totals.extraTotal.toFixed(2)}</span>
-          </div>
+          {/* Show individual additional fees or total */}
+          {extraFees && extraFees.length > 0 ? (
+            <div className="border-b border-indigo-200 pb-2">
+              <div className="flex justify-between items-center py-2">
+                <span className="text-gray-700 font-medium">Additional Fees:</span>
+                <span className="text-gray-900 font-semibold">₹{totals.extraTotal.toFixed(2)}</span>
+              </div>
+              <div className="ml-6 space-y-1.5 mt-2 bg-blue-50 rounded-lg p-3 border border-blue-200">
+                {extraFees.map((fee, index) => (
+                  <div key={index} className="flex justify-between items-center py-1.5 text-sm">
+                    <span className="text-gray-700 flex items-center gap-2 font-medium">
+                      <span className="text-blue-600">▪</span>
+                      {fee.title || `Fee ${index + 1}`}
+                    </span>
+                    <span className="text-gray-800 font-semibold">₹{Number(fee.amount || 0).toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center py-2 border-b border-indigo-200">
+              <span className="text-gray-700 font-medium">Additional Fees:</span>
+              <span className="text-gray-900 font-semibold">₹{totals.extraTotal.toFixed(2)}</span>
+            </div>
+          )}
           
           {totals.lateFineTotal > 0 && (
             <div className="flex justify-between items-center py-2 border-b border-red-300 bg-red-50 px-3 rounded">

@@ -16,7 +16,7 @@ export default function FacilitiesSection() {
     {
       id: 2,
       title: 'ACTIVITY ROOM',
-      image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800',
+      image: 'https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/employees2-Aq2X4eKWgOILDXDB.png',
       icon: '🎨',
       color: 'bg-blue-600',
       ribbon: 'bg-blue-600'
@@ -24,7 +24,7 @@ export default function FacilitiesSection() {
     {
       id: 3,
       title: 'DANCE & MUSIC STUDIO',
-      image: 'https://images.unsplash.com/photo-1460518451285-97b6aa326961?w=800',
+      image: 'https://cdn.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/cdn-builder-placeholders/grid-gallery/woman-with-flowers-in-hair.png',
       icon: '🎵',
       color: 'bg-green-500',
       ribbon: 'bg-green-500'
@@ -32,7 +32,7 @@ export default function FacilitiesSection() {
     {
       id: 4,
       title: 'TECH SAVY CLASSES',
-      image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800',
+      image: 'https://assets.zyrosite.com/dOqNXeekPrHE45km/computer-lab-school-YanzpDq96oFZ71qO.jpg',
       icon: '💻',
       color: 'bg-orange-500',
       ribbon: 'bg-orange-500'
@@ -40,7 +40,7 @@ export default function FacilitiesSection() {
     {
       id: 5,
       title: 'LIBRARY',
-      image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800',
+      image: 'https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/student-123-A1arvLarxnCR1KWO.webp',
       icon: '📚',
       color: 'bg-purple-600',
       ribbon: 'bg-purple-600'
@@ -48,7 +48,7 @@ export default function FacilitiesSection() {
     {
       id: 6,
       title: 'SPORTS COMPLEX',
-      image: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800',
+      image: 'https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/student-123-A1arvLarxnCR1KWO.webp',
       icon: '⚽',
       color: 'bg-red-500',
       ribbon: 'bg-red-500'
