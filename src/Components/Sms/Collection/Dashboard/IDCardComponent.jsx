@@ -1,12 +1,21 @@
 import { useState } from "react";
-import { Upload, Search, Download, X, Loader2, FileArchive, CheckCircle, GraduationCap } from "lucide-react";
+import {
+  Upload,
+  Search,
+  Download,
+  X,
+  Loader2,
+  FileArchive,
+  CheckCircle,
+  GraduationCap,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import {
   uploadZipFile,
   generateIdCard,
   downloadIdcard,
+  generateIdCardClassWise,
 } from "../../../../api/idcardApi";
-
 
 export default function IDCardComponent() {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -16,7 +25,7 @@ export default function IDCardComponent() {
   const [showModal, setShowModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
-  
+
   // New states for class/section feature
   const [className, setClassName] = useState("");
   const [section, setSection] = useState("");
@@ -35,26 +44,28 @@ export default function IDCardComponent() {
 
   const playSuccessSound = () => {
     // Create AudioContext
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    
+    const audioContext = new (
+      window.AudioContext || window.webkitAudioContext
+    )();
+
     // Success sound sequence (happy ascending notes) - LOUDER VERSION
-    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
     const duration = 0.2;
-    
+
     notes.forEach((frequency, index) => {
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
-      
+
       oscillator.connect(gainNode);
       gainNode.connect(audioContext.destination);
-      
+
       oscillator.frequency.value = frequency;
-      oscillator.type = 'sine';
-      
-      const startTime = audioContext.currentTime + (index * duration);
+      oscillator.type = "sine";
+
+      const startTime = audioContext.currentTime + index * duration;
       gainNode.gain.setValueAtTime(0.8, startTime);
       gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-      
+
       oscillator.start(startTime);
       oscillator.stop(startTime + duration);
     });
@@ -70,17 +81,14 @@ export default function IDCardComponent() {
       setIsUploading(true);
       setUploadSuccess(false);
 
-      const { data } = await uploadZipFile(
-        uploadedFile,
-        "batch-2025-01"
-      );
+      const { data } = await uploadZipFile(uploadedFile, "batch-2025-01");
 
       if (data.success) {
         setUploadSuccess(true);
         playSuccessSound();
 
         toast.success(
-          `Upload successful!\nUpdated: ${data.updatedCount}\nWarnings: ${data.warnings.length}`
+          `Upload successful!\nUpdated: ${data.updatedCount}\nWarnings: ${data.warnings.length}`,
         );
 
         console.log("Updated Records:", data.updated);
@@ -91,7 +99,7 @@ export default function IDCardComponent() {
     } catch (error) {
       console.error(error);
       toast.error(
-        error.response?.data?.message || "Something went wrong during upload"
+        error.response?.data?.message || "Something went wrong during upload",
       );
     } finally {
       setIsUploading(false);
@@ -140,9 +148,8 @@ export default function IDCardComponent() {
       console.error(error);
 
       toast.error(
-        error.response?.data?.message ||
-          "Error while generating bulk ID cards",
-        { id: "generate-idcard" }
+        error.response?.data?.message || "Error while generating bulk ID cards",
+        { id: "generate-idcard" },
       );
     } finally {
       setIsLoading(false);
@@ -156,12 +163,42 @@ export default function IDCardComponent() {
       return;
     }
 
-    // Just show the modal with the entered data (no API call)
-    setShowClassModal(true);
-    
-    toast.success("Ready to generate ID cards by class/section", {
-      id: "generate-idcard-class",
-    });
+    try {
+      // 🔄 loading ON
+      setIsLoading(true);
+
+      const payload = {
+        className: className.trim(),
+        section: section ? section.trim().toUpperCase() : undefined,
+      };
+
+      // 📡 API CALL
+      const res = await generateIdCardClassWise(payload);
+
+      if (res?.data?.fileName) {
+        localStorage.setItem("bulkIdcardFileName", res.data.fileName);
+      }
+
+      if (res?.data?.success) {
+        // ✅ success toast
+        toast.success("ID cards generated successfully 🎉", {
+          autoClose: 3000,
+        });
+
+        // 🪟 open modal
+        setShowClassModal(true);
+      } else {
+        throw new Error(res?.data?.message || "Generation failed");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Something went wrong", {
+        autoClose: 3000,
+      });
+    } finally {
+      // 🔄 loading OFF
+      setIsLoading(false);
+    }
   };
 
   const handleDownload = async () => {
@@ -197,6 +234,7 @@ export default function IDCardComponent() {
       });
 
       setShowModal(false);
+      setShowClassModal(false);
       setFromSerial("");
       setToSerial("");
     } catch (error) {
@@ -204,7 +242,7 @@ export default function IDCardComponent() {
 
       toast.error(
         error.response?.data?.message || "Failed to download ID cards",
-        { id: "download-idcard" }
+        { id: "download-idcard" },
       );
     }
   };
@@ -214,12 +252,15 @@ export default function IDCardComponent() {
     // Just log the data for now (you can integrate API later)
     console.log("Download ID Cards for:", {
       className: className,
-      section: section || "All Sections"
+      section: section || "All Sections",
     });
 
-    toast.info(`Ready to download ID cards for Class ${className}${section ? ` - Section ${section}` : ''}`, {
-      id: "download-idcard-class",
-    });
+    toast.info(
+      `Ready to download ID cards for Class ${className}${section ? ` - Section ${section}` : ""}`,
+      {
+        id: "download-idcard-class",
+      },
+    );
 
     // Close modal and reset form
     setShowClassModal(false);
@@ -242,7 +283,9 @@ export default function IDCardComponent() {
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
                   ID Card Management
                 </h1>
-                <p className="text-gray-600">Upload and manage student ID cards with ease</p>
+                <p className="text-gray-600">
+                  Upload and manage student ID cards with ease
+                </p>
               </div>
             </div>
           </div>
@@ -257,9 +300,11 @@ export default function IDCardComponent() {
                 <div className="p-3 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl shadow-md">
                   <Upload className="text-white" size={24} />
                 </div>
-                <h2 className="text-xl font-bold text-gray-800">Upload ID Cards</h2>
+                <h2 className="text-xl font-bold text-gray-800">
+                  Upload ID Cards
+                </h2>
               </div>
-              
+
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-10 hover:border-emerald-400 hover:bg-emerald-50/50 transition-all duration-300 bg-gradient-to-br from-gray-50 to-emerald-50/30">
                 <input
                   type="file"
@@ -281,7 +326,9 @@ export default function IDCardComponent() {
                   <p className="text-gray-500 text-sm text-center">
                     or drag and drop your file here
                   </p>
-                  <p className="text-xs text-gray-400 mt-2">Supports .zip files up to 50MB</p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    Supports .zip files up to 50MB
+                  </p>
                 </label>
               </div>
 
@@ -293,9 +340,14 @@ export default function IDCardComponent() {
                         <CheckCircle className="text-white" size={22} />
                       </div>
                       <div>
-                        <p className="text-gray-800 font-semibold">{uploadedFile.name}</p>
+                        <p className="text-gray-800 font-semibold">
+                          {uploadedFile.name}
+                        </p>
                         <p className="text-gray-600 text-sm">
-                          {(uploadedFile.size / 1024).toFixed(2)} KB • {uploadSuccess ? "Uploaded successfully" : "Ready to upload"}
+                          {(uploadedFile.size / 1024).toFixed(2)} KB •{" "}
+                          {uploadSuccess
+                            ? "Uploaded successfully"
+                            : "Ready to upload"}
                         </p>
                       </div>
                     </div>
@@ -334,8 +386,12 @@ export default function IDCardComponent() {
                     <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400 rounded-xl flex items-center gap-3">
                       <CheckCircle className="text-green-600" size={24} />
                       <div>
-                        <p className="text-green-800 font-semibold">Upload Successful!</p>
-                        <p className="text-green-600 text-sm">Your file has been uploaded and processed.</p>
+                        <p className="text-green-800 font-semibold">
+                          Upload Successful!
+                        </p>
+                        <p className="text-green-600 text-sm">
+                          Your file has been uploaded and processed.
+                        </p>
                       </div>
                     </div>
                   )}
@@ -352,7 +408,9 @@ export default function IDCardComponent() {
                 <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-md">
                   <Search className="text-white" size={24} />
                 </div>
-                <h2 className="text-xl font-bold text-gray-800">Search by Serial</h2>
+                <h2 className="text-xl font-bold text-gray-800">
+                  Search by Serial
+                </h2>
               </div>
 
               <div className="space-y-5 mb-6">
@@ -398,9 +456,7 @@ export default function IDCardComponent() {
                     Generating...
                   </>
                 ) : (
-                  <>
-                    Generate ID Cards
-                  </>
+                  <>Generate ID Cards</>
                 )}
               </button>
             </div>
@@ -414,7 +470,9 @@ export default function IDCardComponent() {
                 <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-md">
                   <GraduationCap className="text-white" size={24} />
                 </div>
-                <h2 className="text-xl font-bold text-gray-800">By Class & Section</h2>
+                <h2 className="text-xl font-bold text-gray-800">
+                  By Class & Section
+                </h2>
               </div>
 
               <div className="space-y-5 mb-6">
@@ -467,27 +525,47 @@ export default function IDCardComponent() {
           <div className="lg:col-span-2 group relative">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-2xl opacity-10 blur-lg"></div>
             <div className="relative bg-white border-2 border-indigo-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">📋 Quick Guide</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-4">
+                📋 Quick Guide
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">1</div>
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">
+                    1
+                  </div>
                   <div>
-                    <p className="font-semibold text-gray-800 mb-1">Upload ZIP File</p>
-                    <p className="text-sm text-gray-600">Select your ID cards ZIP file and click submit to upload</p>
+                    <p className="font-semibold text-gray-800 mb-1">
+                      Upload ZIP File
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Select your ID cards ZIP file and click submit to upload
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">2</div>
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">
+                    2
+                  </div>
                   <div>
-                    <p className="font-semibold text-gray-800 mb-1">Search Cards</p>
-                    <p className="text-sm text-gray-600">Use serial range or class/section to generate ID cards</p>
+                    <p className="font-semibold text-gray-800 mb-1">
+                      Search Cards
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Use serial range or class/section to generate ID cards
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">3</div>
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">
+                    3
+                  </div>
                   <div>
-                    <p className="font-semibold text-gray-800 mb-1">Download Cards</p>
-                    <p className="text-sm text-gray-600">Search and download the ID cards you need instantly</p>
+                    <p className="font-semibold text-gray-800 mb-1">
+                      Download Cards
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Search and download the ID cards you need instantly
+                    </p>
                   </div>
                 </div>
               </div>
@@ -504,11 +582,15 @@ export default function IDCardComponent() {
                 </div>
                 <h3 className="text-gray-800 font-bold">Total Downloads</h3>
               </div>
-              <p className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">89</p>
+              <p className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                89
+              </p>
               <p className="text-gray-600 text-sm mt-2">ID cards downloaded</p>
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <p className="text-xs text-gray-500">Last download:</p>
-                <p className="text-sm font-semibold text-gray-700">2 hours ago</p>
+                <p className="text-sm font-semibold text-gray-700">
+                  2 hours ago
+                </p>
               </div>
             </div>
           </div>
@@ -521,10 +603,17 @@ export default function IDCardComponent() {
           <div className="bg-white rounded-2xl shadow-2xl p-10 flex flex-col items-center gap-4 border-2 border-blue-200">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur-xl opacity-50"></div>
-              <Loader2 className="relative animate-spin text-blue-600" size={56} />
+              <Loader2
+                className="relative animate-spin text-blue-600"
+                size={56}
+              />
             </div>
-            <p className="text-gray-800 font-bold text-xl">Loading ID Cards...</p>
-            <p className="text-gray-600 text-sm">Please wait while we fetch your data</p>
+            <p className="text-gray-800 font-bold text-xl">
+              Loading ID Cards...
+            </p>
+            <p className="text-gray-600 text-sm">
+              Please wait while we fetch your data
+            </p>
           </div>
         </div>
       )}
@@ -548,13 +637,17 @@ export default function IDCardComponent() {
                 ID Cards Found!
               </h3>
               <p className="text-gray-600 text-lg">
-                Found ID cards from serial <span className="text-blue-600 font-bold">{fromSerial}</span> to <span className="text-blue-600 font-bold">{toSerial}</span>
+                Found ID cards from serial{" "}
+                <span className="text-blue-600 font-bold">{fromSerial}</span> to{" "}
+                <span className="text-blue-600 font-bold">{toSerial}</span>
               </p>
             </div>
 
             <div className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-5 mb-6">
               <div className="flex justify-between mb-3">
-                <span className="text-gray-700 font-semibold">Total Cards:</span>
+                <span className="text-gray-700 font-semibold">
+                  Total Cards:
+                </span>
                 <span className="text-gray-900 font-bold text-lg">
                   {parseInt(toSerial) - parseInt(fromSerial) + 1}
                 </span>
@@ -595,19 +688,34 @@ export default function IDCardComponent() {
                 ID Cards Generated!
               </h3>
               <p className="text-gray-600 text-lg">
-                Generated ID cards for <span className="text-purple-600 font-bold">Class {className}</span>
-                {section && <> - <span className="text-purple-600 font-bold">Section {section}</span></>}
+                Generated ID cards for{" "}
+                <span className="text-purple-600 font-bold">
+                  Class {className}
+                </span>
+                {section && (
+                  <>
+                    {" "}
+                    -{" "}
+                    <span className="text-purple-600 font-bold">
+                      Section {section}
+                    </span>
+                  </>
+                )}
               </p>
             </div>
 
             <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-5 mb-6">
               <div className="flex justify-between mb-3">
                 <span className="text-gray-700 font-semibold">Class:</span>
-                <span className="text-gray-900 font-bold text-lg">{className}</span>
+                <span className="text-gray-900 font-bold text-lg">
+                  {className}
+                </span>
               </div>
               <div className="flex justify-between mb-3">
                 <span className="text-gray-700 font-semibold">Section:</span>
-                <span className="text-gray-900 font-bold text-lg">{section || "All"}</span>
+                <span className="text-gray-900 font-bold text-lg">
+                  {section || "All"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-700 font-semibold">Format:</span>
@@ -616,7 +724,7 @@ export default function IDCardComponent() {
             </div>
 
             <button
-              onClick={handleDownloadByClass}
+              onClick={handleDownload}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
             >
               <Download size={22} />

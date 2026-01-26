@@ -18,6 +18,10 @@ export const generateIdCard = (formData) => {
   return axiosInstance.post("/idcard/generate/bulk", formData);
 };
 
+export const generateIdCardClassWise = (formData)=>{
+  return axiosInstance.post("/idcard/generate/classwise",formData)
+}
+
 export const downloadIdcard = (fileName) => {
   return axiosInstance.get(`/idcard/download/${fileName}`, {
     responseType: "blob", // 👈 VERY IMPORTANT

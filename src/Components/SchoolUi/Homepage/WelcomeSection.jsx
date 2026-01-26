@@ -52,12 +52,9 @@ export default function WelcomeSection() {
       }}
     >
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
-
         {/* LEFT CONTENT */}
         <div>
-          <p className="text-red-600 font-medium mb-3">
-            Warm Welcome To
-          </p>
+          <p className="text-red-600 font-medium mb-3">Warm Welcome To</p>
 
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6 leading-tight">
             Thawe Central School{" "}
@@ -110,7 +107,6 @@ export default function WelcomeSection() {
             ))}
           </div>
         </div>
-
       </div>
     </section>
   );
