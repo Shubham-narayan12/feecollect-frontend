@@ -41,7 +41,7 @@ export default function LoginPage() {
         localStorage.setItem("userName", data.admin.name);
         localStorage.setItem("userRole", data.admin.role);
 
-        navigate("/", { replace: true });
+        navigate("/sms", { replace: true });
       } else {
         setError(data.message || "Invalid credentials");
       }

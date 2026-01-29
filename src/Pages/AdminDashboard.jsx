@@ -11,7 +11,8 @@ import FeeCollection from "./FeeCollection";
 import PaymentHistory from "../Components/Sms/Collection/Dashboard/PaymentHistory";
 import SchoolFeeStructure from "../Components/Sms/Collection/Dashboard/Fees";
 import FeeSettings from "../Pages/FeeSettings";
-import AdminProfile from "../Pages/AdminProfile";
+import SchoolAdminProfile from "../Pages/SchoolAdminProfile";
+
 import IDCardComponent from "../Components/Sms/Collection/Dashboard/IDCardComponent";
 
 export default function AdminDashboard() {
@@ -38,7 +39,8 @@ export default function AdminDashboard() {
             <Route path="payment-history" element={<PaymentHistory />} />
             <Route path="reports" element={<Reports />} />
             <Route path="admission" element={<AdmissionForm />} />
-            <Route path="profile" element={<AdminProfile />} />
+            <Route path="profile" element={<SchoolAdminProfile />} />
+
             <Route path="id-cards" element={<IDCardComponent />} />
 
             {/* Redirect /sms to /sms/dashboard */}

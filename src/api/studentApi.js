@@ -35,3 +35,8 @@ export const editStudent = async (id, formData) => {
 export const deleteStudent = async (id) => {
   return axiosInstance.delete(`/student/${id}`);
 };
+
+// Add this function if it doesn't exist
+export const updateStudentApi = async (id, data) => {
+  return await axios.put(`/api/students/${id}`, data);
+};
