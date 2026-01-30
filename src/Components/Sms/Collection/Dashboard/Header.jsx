@@ -377,6 +377,7 @@ export default function Header() {
 
                   {/* Menu Items */}
                   <div className="py-2">
+<<<<<<< HEAD
                     <button
                       className="flex items-center gap-3 w-full text-left px-5 py-3 text-sm text-slate-300 hover:bg-slate-700/50 hover:text-white transition-all duration-200 group"
                       onClick={() => {
@@ -396,6 +397,19 @@ export default function Header() {
                           strokeWidth={2}
                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                         />
+=======
+                  <button
+  className="flex items-center gap-3 w-full text-left px-5 py-3 text-sm text-slate-300 hover:bg-slate-700/50 hover:text-white transition-all duration-200 group"
+  onClick={() => {
+    setShowProfileMenu(false);
+    navigate("/sms/profile");
+  }}
+>
+
+
+                      <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+>>>>>>> 4cd6cf7903beda4aa79d00723a8cde85da8d9967
                       </svg>
                       <span className="font-medium">My Profile</span>
                     </button>
@@ -403,6 +417,7 @@ export default function Header() {
                     <div className="my-2 mx-3 h-px bg-slate-700/50" />
 
                     <button
+<<<<<<< HEAD
                       className="block w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-slate-700/50 hover:text-white transition-all duration-200"
                       onClick={handleLogout}
                     >
@@ -418,6 +433,12 @@ export default function Header() {
                           strokeWidth={2}
                           d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                         />
+=======
+                      className="flex items-center gap-3 w-full text-left px-5 py-3 text-sm text-red-400 hover:bg-slate-700/50 hover:text-white transition-all duration-200 group"
+                         onClick={handleLogout}  >
+                      <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+>>>>>>> 4cd6cf7903beda4aa79d00723a8cde85da8d9967
                       </svg>
                       <span className="font-medium">Logout</span>
                     </button>
@@ -430,7 +451,7 @@ export default function Header() {
       </header>
 
       {/* Enhanced CSS Animations */}
-      <style jsx>{`
+      <style>{`
         @keyframes pulse-slow {
           0%,
           100% {
