@@ -99,7 +99,7 @@ function SchoolNavbar() {
               />
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 bg-clip-text text-transparent hover:from-[#8B1538] hover:via-[#6B0F2B] hover:to-[#8B1538] transition-all duration-500">
-                  Thawe Central School <span className="text-[#8B1538] animate-pulse-color">Gopalganj</span>
+                  Thawe Central School GOPALGANJ
                 </h1>
                 <p className="text-xs text-gray-600 hover:text-[#8B1538] transition-colors duration-300">
                   Excellence in Education Since 1999
