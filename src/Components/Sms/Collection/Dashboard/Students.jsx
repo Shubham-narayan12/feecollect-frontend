@@ -1,15 +1,9 @@
 import React, { useState, useMemo, useEffect } from "react";
-import {
-  loadStudents,
-  saveStudents,
-  updateStudent,
-} from "../../../../Data/studentStorage";
 import { useNavigate } from "react-router-dom";
-
-import { bulkApply, getAllStudent } from "../../../../api/studentApi.js";
+import { bulkApply, getAllStudent, updateStudentApi } from "../../../../api/studentApi.js";
 import { toast } from "react-toastify";
 import StudentIDCard from "../Students/StudentIDCard";
-import StudentInfoModal from "../Students/StudentInfoModal";
+import StudentEditModal from "../Students/StudentEditModal"; // ✅ Import new modal
 
 export default function Students() {
   const navigate = useNavigate();
@@ -17,8 +11,6 @@ export default function Students() {
   const [students, setStudents] = useState([]);
   const [editing, setEditing] = useState(null);
   const [showIDCard, setShowIDCard] = useState(null);
-
-  // Table hidden initially
   const [showTable, setShowTable] = useState(false);
 
   // Filters
@@ -26,8 +18,6 @@ export default function Students() {
   const [section, setSection] = useState("");
   const [session, setSession] = useState("");
   const [rollNo, setRollNo] = useState("");
-
-  // Search bar
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -73,7 +63,6 @@ export default function Students() {
 
       if (search) {
         const term = search.toLowerCase();
-
         const matches =
           s.studentName?.toLowerCase().includes(term) ||
           s.fatherName?.toLowerCase().includes(term) ||
@@ -88,12 +77,23 @@ export default function Students() {
     });
   }, [students, cls, section, session, rollNo, search]);
 
-  // Save editing
-  function handleEditSave() {
-    updateStudent(editing);
-    setStudents(loadStudents());
-    setEditing(null);
-  }
+  // ✅ UPDATED: Save editing with API call
+  const handleEditSave = async (updatedStudent) => {
+    try {
+      const res = await updateStudentApi(updatedStudent._id, updatedStudent);
+      
+      if (res.data.success) {
+        toast.success("Student updated successfully!");
+        await fetchStudents(); // Refresh the list
+        setEditing(null);
+      } else {
+        toast.error(res.data.message || "Failed to update student");
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      toast.error(error?.response?.data?.message || "Failed to update student");
+    }
+  };
 
   // Filter button
   function applyFilter() {
@@ -166,7 +166,6 @@ export default function Students() {
             </div>
 
             <div className="flex gap-3 flex-wrap">
-              {/* ✅ FIXED: Changed from /?tab=admission to /sms/admission */}
               <button
                 onClick={() => navigate("/sms/admission")}
                 className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-semibold flex items-center gap-2"
@@ -390,7 +389,7 @@ export default function Students() {
                 <tbody className="divide-y divide-slate-200 bg-white">
                   {filtered.length ? (
                     filtered.map((s, index) => (
-                      <tr key={s.id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-150">
+                      <tr key={s._id} className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-150">
                         <td className="py-4 px-4">
                           <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full">
                             <span className="text-sm font-bold text-slate-700">{s.serialNo}</span>
@@ -403,8 +402,8 @@ export default function Students() {
                         <td className="py-4 px-4 text-sm text-slate-600">{s.fatherName}</td>
                         <td className="py-4 px-4">
                           <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
-                            s.gender === "Male" ? "bg-blue-100 text-blue-700" :
-                            s.gender === "Female" ? "bg-pink-100 text-pink-700" :
+                            s.gender === "Boy" ? "bg-blue-100 text-blue-700" :
+                            s.gender === "Girl" ? "bg-pink-100 text-pink-700" :
                             "bg-slate-100 text-slate-700"
                           }`}>
                             {s.gender}
@@ -437,24 +436,23 @@ export default function Students() {
 
                         <td className="py-4 px-4">
                           <div className="flex gap-2 flex-wrap">
-                            {/* ✅ FIXED: Changed from /?tab=fee-collection to /sms/fee-collection */}
                             <button
-                              onClick={() =>navigate(`/sms/fee-collection?student=${s._id}`)}
-                              className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-xs font-semibold"
+                              onClick={() => navigate(`/sms/fee-collection?student=${s._id}`)}
+                              className="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-xs font-semibold transition-colors"
                             >
                               Fee
                             </button>
 
                             <button
                               onClick={() => setEditing(s)}
-                              className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-semibold"
+                              className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-semibold transition-colors"
                             >
                               Edit
                             </button>
 
                             <button
                               onClick={() => setShowIDCard(s)}
-                              className="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-xs font-semibold"
+                              className="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-xs font-semibold transition-colors"
                             >
                               ID Card
                             </button>
@@ -483,113 +481,22 @@ export default function Students() {
           </div>
         )}
 
-        {/* EDIT MODAL */}
+        {/* ✅ NEW EDIT MODAL */}
         {editing && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl">
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-6 rounded-t-2xl">
-                <h3 className="text-2xl font-bold flex items-center gap-2">
-                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                  Edit Student Details
-                </h3>
-                <p className="text-blue-100 text-sm mt-1">Update student information</p>
-              </div>
-
-              <div className="p-8">
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Student Name</label>
-                    <input
-                      type="text"
-                      className="border-2 border-slate-200 px-4 py-3 w-full rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all duration-200"
-                      value={editing.name}
-                      onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                      placeholder="Enter student name"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Mobile Number</label>
-                    <input
-                      type="text"
-                      className="border-2 border-slate-200 px-4 py-3 w-full rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all duration-200"
-                      value={editing.mobile}
-                      onChange={(e) => setEditing({ ...editing, mobile: e.target.value })}
-                      placeholder="Enter mobile number"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Class</label>
-                    <select
-                      className="border-2 border-slate-200 px-4 py-3 w-full rounded-xl bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all duration-200 font-medium"
-                      value={editing.class}
-                      onChange={(e) => setEditing({ ...editing, class: e.target.value })}
-                    >
-                      {["Nursery", "KG", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"].map((x) => (
-                        <option key={x}>{x}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Section</label>
-                    <select
-                      className="border-2 border-slate-200 px-4 py-3 w-full rounded-xl bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all duration-200 font-medium"
-                      value={editing.section}
-                      onChange={(e) => setEditing({ ...editing, section: e.target.value })}
-                    >
-                      {["A", "B", "C", "D"].map((x) => (
-                        <option key={x}>{x}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-3 mt-8">
-                  <button
-                    onClick={() => setEditing(null)}
-                    className="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-semibold transition-all duration-200"
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    onClick={handleEditSave}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-                  >
-                    Save Changes
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <StudentEditModal
+            student={editing}
+            onClose={() => setEditing(null)}
+            onSave={handleEditSave}
+          />
         )}
+
+        {/* ID CARD MODAL */}
         {showIDCard && (
-  <StudentIDCard
-    student={showIDCard}
-    onClose={() => setShowIDCard(null)}
-  />
-)}
-{editing && (
-  <StudentInfoModal
-    student={{
-      ...editing,
-      documents: editing.documents || {
-        tc: false,
-        character: false,
-        reportCard: false,
-        birthCert: false,
-      },
-    }}
-    onClose={() => setEditing(null)}
-    onSave={handleEditSave}
-  />
-)}
-
-
+          <StudentIDCard
+            student={showIDCard}
+            onClose={() => setShowIDCard(null)}
+          />
+        )}
       </div>
     </div>
   );

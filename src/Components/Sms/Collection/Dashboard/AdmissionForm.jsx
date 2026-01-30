@@ -14,6 +14,8 @@ export default function AdmissionForm() {
     penNo: "",
     className: "",
     section: "",
+    dob: "",
+    admissionDate: "",
     session: "2026-2027",
     mobile: "",
     gender: "",
@@ -30,10 +32,9 @@ export default function AdmissionForm() {
     bloodGroup: "",
 
     // 👇 FILE OBJECTS
-    photo: null,
-    fatherPhoto: null,
-    motherPhoto: null,
-
+    photoPreview: null,
+fatherPhotoPreview: null,
+motherPhotoPreview: null,
     // 👇 PREVIEW
     photoPreview: null,
     fatherPhotoPreview: null,
@@ -288,7 +289,13 @@ export default function AdmissionForm() {
                 onChange={handleInput}
                 required
               />
-
+<Input
+  type="date"
+  label="Admission Date"
+  name="admissionDate"
+  value={form.admissionDate}
+  onChange={handleInput}
+/>
               <Select
                 label="Class"
                 name="className"
