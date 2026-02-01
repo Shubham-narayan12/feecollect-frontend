@@ -1,4 +1,3 @@
-import { loadAdmissions, saveAdmissions } from "../../../../Data/admissionStorage";
 import { addStudent } from "../../../../Data/studentStorage";
 
 import React, { useState } from "react";
@@ -15,7 +14,6 @@ export default function AdmissionForm() {
     className: "",
     section: "",
     dob: "",
-    admissionDate: "",
     session: "2026-2027",
     mobile: "",
     gender: "",
@@ -24,8 +22,6 @@ export default function AdmissionForm() {
     address1: "",
     address2: "",
     city: "",
-    dob: "",
-
     rollNo: "",
     transport: "",
     vehicle: "",
@@ -33,27 +29,23 @@ export default function AdmissionForm() {
 
     // 👇 FILE OBJECTS
     photoPreview: null,
-fatherPhotoPreview: null,
-motherPhotoPreview: null,
-    // 👇 PREVIEW
-    photoPreview: null,
     fatherPhotoPreview: null,
     motherPhotoPreview: null,
   });
 
   function handleInput(e) {
     const { name, value } = e.target;
-    
+
     // Limit Aadhar number to 12 digits
     if (name === "aadharNo" && value.length > 12) {
       return;
     }
-    
+
     // Limit PEN number to 12 digits
     if (name === "penNo" && value.length > 12) {
       return;
     }
-    
+
     setForm({ ...form, [name]: value });
   }
 
@@ -148,7 +140,7 @@ motherPhotoPreview: null,
           JSON.stringify({
             hasFeeBenefit: form.feeBenefit.hasFeeBenefit,
             description: form.feeBenefit.description || "",
-          })
+          }),
         );
       }
 
@@ -164,8 +156,8 @@ motherPhotoPreview: null,
             form.recommendedFees.map((f) => ({
               feeType: f.feeType,
               amount: Number(f.amount),
-            }))
-          )
+            })),
+          ),
         );
       }
 
@@ -289,13 +281,7 @@ motherPhotoPreview: null,
                 onChange={handleInput}
                 required
               />
-<Input
-  type="date"
-  label="Admission Date"
-  name="admissionDate"
-  value={form.admissionDate}
-  onChange={handleInput}
-/>
+
               <Select
                 label="Class"
                 name="className"
@@ -550,7 +536,7 @@ motherPhotoPreview: null,
                   disabled
                 />
               </div>
-              
+
               <Input
                 label="Transportation"
                 name="transport"
@@ -558,7 +544,7 @@ motherPhotoPreview: null,
                 onChange={handleInput}
                 placeholder="e.g., Alawalpur | Rs.500"
               />
-              
+
               <Input
                 label="Vehicle Type"
                 name="vehicle"
@@ -833,7 +819,7 @@ motherPhotoPreview: null,
                     type="button"
                     onClick={() => {
                       const updated = form.recommendedFees.filter(
-                        (_, i) => i !== index
+                        (_, i) => i !== index,
                       );
                       setForm({ ...form, recommendedFees: updated });
                     }}
