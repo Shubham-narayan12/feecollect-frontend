@@ -41,52 +41,7 @@ function SchoolNavbar() {
         }`}
       >
         <div className="flex items-center">
-          {/* Brand Banner */}
-          <div className="relative h-40 min-w-[220px]">
-            <div className="absolute top-0 left-0 right-0 h-full bg-gradient-to-br from-red-700 via-red-600 to-orange-500 shadow-2xl">
-              {/* Decorative Corner Accents */}
-              <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-white/30"></div>
-              <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-white/30"></div>
-              <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-white/30"></div>
-              <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-white/30"></div>
-              
-              {/* Geometric Pattern Background */}
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-4 left-4 w-8 h-8 border-2 border-white rotate-45"></div>
-                <div className="absolute top-8 right-6 w-6 h-6 border-2 border-white rotate-12"></div>
-                <div className="absolute bottom-6 left-8 w-10 h-10 border-2 border-white rotate-45"></div>
-                <div className="absolute bottom-8 right-4 w-7 h-7 border-2 border-white rotate-12"></div>
-              </div>
-              
-              {/* Inner Border */}
-              <div className="absolute inset-3 border-2 border-white/40 rounded-lg"></div>
-              
-              {/* Content */}
-              <div className="flex items-center justify-center h-full text-white font-bold relative z-10">
-                <div className="text-center px-4">
-                  <div className="text-2xl mb-1 tracking-wide drop-shadow-lg">Future Ready</div>
-                  <div className="text-2xl mb-2 tracking-wide drop-shadow-lg">Education</div>
-                  <div className="flex items-center justify-center gap-2 mt-2">
-                    <div className="w-8 h-0.5 bg-white/60"></div>
-                    <div className="text-sm font-semibold tracking-widest drop-shadow-lg">TODAY</div>
-                    <div className="w-8 h-0.5 bg-white/60"></div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Bottom Triangle */}
-              <div className="absolute left-1/2 -translate-x-1/2 -bottom-7">
-                <div className="relative">
-                  <div className="w-0 h-0 border-l-[100px] border-r-[100px] border-t-[30px] border-l-transparent border-r-transparent border-t-red-600"></div>
-                  {/* Small accent on triangle */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-white/20 rounded-full -translate-y-5"></div>
-                </div>
-              </div>
-              
-              {/* Shine Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent"></div>
-            </div>
-          </div>
+          
 
           {/* Navbar Content - Reduced Height */}
           <div className="flex-1 flex items-center justify-between px-6 h-20">
@@ -99,10 +54,10 @@ function SchoolNavbar() {
               />
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 bg-clip-text text-transparent hover:from-[#8B1538] hover:via-[#6B0F2B] hover:to-[#8B1538] transition-all duration-500">
-                  Thawe Central School GOPALGANJ
+                  Green Field School
                 </h1>
                 <p className="text-xs text-gray-600 hover:text-[#8B1538] transition-colors duration-300">
-                  Excellence in Education Since 1999
+                  Excellence in Education Since 1995
                 </p>
               </div>
             </div>

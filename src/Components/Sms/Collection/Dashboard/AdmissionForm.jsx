@@ -310,6 +310,7 @@ export default function AdmissionForm() {
                 value={form.section}
                 onChange={handleInput}
                 options={["A", "B", "C", "D"]}
+                required
               />
 
               <Input
@@ -318,11 +319,12 @@ export default function AdmissionForm() {
                 name="dob"
                 value={form.dob}
                 onChange={handleInput}
+                required
               />
 
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
-                  Gender *
+                  Gender
                 </label>
                 <div className="flex items-center gap-6 p-3 bg-slate-50 rounded-xl border-2 border-slate-200">
                   <label className="flex items-center gap-2 cursor-pointer group">
@@ -390,7 +392,7 @@ export default function AdmissionForm() {
                 name="fatherName"
                 value={form.fatherName}
                 onChange={handleInput}
-                required
+                
               />
               <Input
                 label="Mother's Name"
@@ -484,7 +486,7 @@ export default function AdmissionForm() {
                 onChange={handleInput}
                 placeholder="Enter 12 digit Aadhar"
                 maxLength={12}
-                required
+                
               />
               <Input
                 type="number"
@@ -494,7 +496,7 @@ export default function AdmissionForm() {
                 onChange={handleInput}
                 placeholder="Enter 12 digit PEN"
                 maxLength={12}
-                required
+                
               />
             </div>
           </div>

@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 // API imports
 import { searchStudentById } from "../api/studentApi";
-import { feecollect } from "../api/feeLedgerApi";
+import { feecollect, getFeeLedgerByStudentId } from "../api/feeLedgerApi";
 import { getAllFeeStructures } from "../api/feeStructure.js";
 import { getFeeStructureByClass } from "../api/feeStructure.js";
 import { generateFeeReceipt, downloadReceiptPdf } from "../api/receiptApi.js";
@@ -624,6 +624,11 @@ export default function FeeCollection() {
   const [discountType, setDiscountType] = useState("none");
   const [discountValue, setDiscountValue] = useState(0);
   const [discountReason, setDiscountReason] = useState("");
+  const [fetchLedger, setFetchLedger] = useState(null);
+  const [oneTimeStatus, setOneTimeStatus] = useState({
+    admissionPaid: false,
+    annualPaid: false,
+  });
 
   const getLateFines = () => {
     const lateFines = [];
@@ -699,10 +704,43 @@ export default function FeeCollection() {
   }, [studentId]);
 
   useEffect(() => {
+    async function loadStudentFeeLedger() {
+      try {
+        const res = await getFeeLedgerByStudentId(studentId);
+        const data = res.data;
+
+        // ✅ ledger set
+        setFetchLedger(data.ledger);
+
+        // ✅ One Time Fee Status Check
+        const admissionPaid =
+          (data.ledger?.admissionFee?.paidAmount || 0) > 0 &&
+          (data.ledger?.admissionFee?.dueAmount || 0) === 0;
+
+        const annualPaid =
+          (data.ledger?.annualFee?.paidAmount || 0) > 0 &&
+          (data.ledger?.annualFee?.dueAmount || 0) === 0;
+
+        setOneTimeStatus({
+          admissionPaid,
+          annualPaid,
+        });
+
+        // ✅ If already paid → auto fill (optional)
+        if (admissionPaid) setAdmissionFee(0);
+        if (annualPaid) setAnnualFee(0);
+      } catch (err) {
+        console.error("Ledger load error:", err);
+      }
+    }
+
+    if (studentId) loadStudentFeeLedger();
+  }, [studentId]);
+
+  useEffect(() => {
     async function loadMasterFee() {
       try {
         if (!student?.className) return;
-        console.log(student.className);
 
         const res = await getFeeStructureByClass({
           className: student.className,
@@ -878,9 +916,21 @@ export default function FeeCollection() {
       navigate(`/sms/payment-history?student=${student._id}`);
     } catch (err) {
       console.error(err);
-      toast.error(
-        err?.response?.data?.message || err.message || "Fee collection failed",
-      );
+
+      const errorMessage =
+        err?.response?.data?.message || err?.message || "Fee collection failed";
+
+      // ❗ Special handling for overpayment
+      if (errorMessage.includes("greater than total bill")) {
+        toast.error("❌ Paid amount is greater than total bill");
+      } else {
+        toast.error(errorMessage);
+      }
+
+      // optional: loading toast remove
+      toast.dismiss("fee");
+      toast.dismiss("receipt");
+      toast.dismiss("download");
     }
   };
 
@@ -1006,6 +1056,7 @@ export default function FeeCollection() {
                 annualFee={annualFee}
                 setAnnualFee={setAnnualFee}
                 inputClass={inputClass}
+                FeeLedger={fetchLedger}
               />
             </CollapsibleSection>
 
@@ -1033,6 +1084,7 @@ export default function FeeCollection() {
                 defaultTransportFee={defaultTransportFee}
                 student={student}
                 inputClass={inputClass}
+                FeeLedger={fetchLedger}
               />
               {lateFines.length > 0 && (
                 <div className="mt-6">
@@ -1061,8 +1113,6 @@ export default function FeeCollection() {
                 inputClass={inputClass}
               />
             </CollapsibleSection>
-
-            
 
             <CollapsibleSection
               id="discount"
@@ -1097,13 +1147,13 @@ export default function FeeCollection() {
               badge={`Total: ₹${totals.grandTotal.toFixed(2)}`}
             >
               <FeeBreakdownSummary
-  totals={totals}
-  discountReason={discountReason}
-  extraFees={extraFees}  // ← ADD THIS LINE!
- />
+                totals={totals}
+                discountReason={discountReason}
+                extraFees={extraFees} // ← ADD THIS LINE!
+              />
             </CollapsibleSection>
 
-             <CollapsibleSection
+            <CollapsibleSection
               id="payment"
               title="Payment Amount"
               icon="💵"
