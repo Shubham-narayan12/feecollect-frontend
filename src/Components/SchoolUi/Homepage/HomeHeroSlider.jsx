@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 
-const images = [
-  "https://assets.zyrosite.com/dOqNXeekPrHE45km/thawe-dJoN9M7K8vfDLM2Y.jpg",
-  "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=580,fit=crop/dOqNXeekPrHE45km/tsc-school-1---copy-AGBvZob37oSBNpvr.jpg",
-  "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/computer-lab-school-YanzpDq96oFZ71qO.jpg",
-  "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=580,fit=crop/dOqNXeekPrHE45km/tcs-logo-trans-12---copy-2-m2Wrv599agteQ3z1.png",
-];
+function HomeHeroSlider() {
+  const images = [
+    "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1600",
+    "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=1600",
+    "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1600",
+    "https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=1600",
+    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600",
+  ];
 
-export default function HomeHeroSlider() {
   const [current, setCurrent] = useState(0);
 
+  // Auto change every 4 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
@@ -19,35 +22,56 @@ export default function HomeHeroSlider() {
   }, []);
 
   return (
-    <section className="relative w-full h-[83vh] overflow-hidden mt-0">
-      {/* Slides */}
-      <div
-        className="flex h-full transition-transform duration-1000 ease-in-out"
-        style={{ transform: `translateX(-${current * 100}%)` }}
-      >
-        {images.map((img, index) => (
-          <div key={index} className="w-full h-full flex-shrink-0">
-            <img
-              src={img}
-              alt="School"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ))}
-      </div>
+    <section className="relative w-full h-[610px] overflow-hidden">
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40" />
+      {/* Background Images */}
+      {images.map((img, index) => (
+        <img
+          key={index}
+          src={img}
+          alt="School"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            index === current ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      ))}
 
-      {/* Text */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <h1 className="text-white text-4xl md:text-5xl font-bold">
-          Learning Beyond Classrooms
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/60 z-10"></div>
+
+      {/* Center Content */}
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4">
+
+        {/* Logo */}
+        <img
+          src="/logo.png"
+          alt="Green Field School"
+          className="w-48 h-48 md:w-52 md:h-52 mb-4 object-contain"
+        />
+
+        {/* School Name */}
+        <h1 className="text-white text-5xl md:text-6xl font-extrabold tracking-wide drop-shadow-lg">
+          Green Field School
         </h1>
-        <p className="mt-4 text-white/90 text-lg">
-          Future Ready Education
+
+        {/* Tagline */}
+        <p className="text-gray-200 mt-2 text-sm md:text-base tracking-widest">
+          FOR KNOWLEDGE & DISCIPLINE
+        </p>
+
+        {/* Description */}
+        <p className="text-gray-300 mt-6 max-w-4xl text-sm md:text-base leading-relaxed">
+          Green Field School is committed to providing quality education,
+          nurturing young minds, and building responsible citizens for the future.
+          Our campus fosters innovation, discipline, and excellence in every student.
         </p>
       </div>
+
+      {/* Right Green Notice Box */}
+      
+
     </section>
   );
 }
+
+export default HomeHeroSlider;
