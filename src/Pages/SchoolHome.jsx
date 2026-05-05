@@ -13,9 +13,8 @@ export default function SchoolHome() {
       <WelcomeSection />
       <VisionMissionSection />
       <SustainabilitySection />
-       <GallerySection />
+      <GallerySection />
       <FacilitiesSection />
-     
       <SecureFutureSection />
     </div>
   );

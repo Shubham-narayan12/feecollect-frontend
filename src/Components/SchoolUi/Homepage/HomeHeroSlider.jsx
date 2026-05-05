@@ -13,17 +13,15 @@ function HomeHeroSlider() {
 
   const [current, setCurrent] = useState(0);
 
-  // Auto change every 4 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
     }, 4000);
-
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="relative w-full h-[610px] overflow-hidden">
+    <section className="relative w-full min-h-[70vh] md:min-h-[85vh] lg:min-h-screen overflow-hidden">
       {/* Background Images */}
       {images.map((img, index) => (
         <img
@@ -36,38 +34,36 @@ function HomeHeroSlider() {
         />
       ))}
 
-      {/* Dark Overlay */}
+      {/* Overlay */}
       <div className="absolute inset-0 bg-black/60 z-10"></div>
 
-      {/* Center Content */}
-      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4">
+      {/* Content */}
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8">
         {/* Logo */}
         <img
           src="/logo.png"
           alt="Green Field School"
-          className="w-48 h-48 md:w-52 md:h-52 mb-4 object-contain"
+          className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-52 lg:h-52 mb-4 object-contain"
         />
 
         {/* School Name */}
-        <h1 className="text-white text-5xl md:text-6xl font-extrabold tracking-wide drop-shadow-lg">
+        <h1 className="text-white text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-wide drop-shadow-lg leading-tight">
           Green Field School
         </h1>
 
         {/* Tagline */}
-        <p className="text-gray-200 mt-2 text-sm md:text-base tracking-widest">
+        <p className="text-gray-200 mt-2 text-[10px] sm:text-xs md:text-sm tracking-widest">
           FOR KNOWLEDGE & DISCIPLINE
         </p>
 
         {/* Description */}
-        <p className="text-gray-300 mt-6 max-w-4xl text-sm md:text-base leading-relaxed">
+        <p className="text-gray-300 mt-4 sm:mt-6 max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-4xl text-xs sm:text-sm md:text-base leading-relaxed">
           Green Field School is committed to providing quality education,
           nurturing young minds, and building responsible citizens for the
           future. Our campus fosters innovation, discipline, and excellence in
           every student.
         </p>
       </div>
-
-      {/* Right Green Notice Box */}
     </section>
   );
 }
