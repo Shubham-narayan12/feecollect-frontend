@@ -74,7 +74,7 @@ function SchoolNavbar() {
           <div>
             <h1 className="text-lg font-bold">GREEN FIELD SCHOOL</h1>
             <p className="text-xs text-green-600">
-              Affiliated To CBSE — Est. 1999
+              Affiliated To CBSE — Est. 1995
             </p>
           </div>
         </Link>

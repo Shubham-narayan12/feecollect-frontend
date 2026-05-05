@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 
 function HomeHeroSlider() {
   const images = [
-    "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1600",
-    "https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=1600",
-    "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1600",
-    "https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=1600",
-    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600",
+    "https://res.cloudinary.com/doomcnl20/image/upload/v1778002986/WhatsApp_Image_2026-04-14_at_9.23.49_AM_p8qftn.jpg",
+    "https://res.cloudinary.com/doomcnl20/image/upload/v1778003078/WhatsApp_Image_2026-04-14_at_9.23.52_AM_hynenr.jpg",
+    "https://res.cloudinary.com/doomcnl20/image/upload/v1778003145/WhatsApp_Image_2026-04-14_at_9.23.50_AM_1_l5d8il.jpg",
+    "https://res.cloudinary.com/doomcnl20/image/upload/v1778003154/WhatsApp_Image_2026-04-14_at_9.23.50_AM_uedk50.jpg",
+    "https://res.cloudinary.com/doomcnl20/image/upload/v1778003170/WhatsApp_Image_2026-04-14_at_9.23.53_AM_yap5qq.jpg",
+    "https://res.cloudinary.com/doomcnl20/image/upload/v1778003192/WhatsApp_Image_2026-04-14_at_9.23.53_AM_2_jx95k4.jpg",
   ];
 
   const [current, setCurrent] = useState(0);
@@ -23,7 +24,6 @@ function HomeHeroSlider() {
 
   return (
     <section className="relative w-full h-[610px] overflow-hidden">
-
       {/* Background Images */}
       {images.map((img, index) => (
         <img
@@ -41,7 +41,6 @@ function HomeHeroSlider() {
 
       {/* Center Content */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4">
-
         {/* Logo */}
         <img
           src="/logo.png"
@@ -62,14 +61,13 @@ function HomeHeroSlider() {
         {/* Description */}
         <p className="text-gray-300 mt-6 max-w-4xl text-sm md:text-base leading-relaxed">
           Green Field School is committed to providing quality education,
-          nurturing young minds, and building responsible citizens for the future.
-          Our campus fosters innovation, discipline, and excellence in every student.
+          nurturing young minds, and building responsible citizens for the
+          future. Our campus fosters innovation, discipline, and excellence in
+          every student.
         </p>
       </div>
 
       {/* Right Green Notice Box */}
-      
-
     </section>
   );
 }
