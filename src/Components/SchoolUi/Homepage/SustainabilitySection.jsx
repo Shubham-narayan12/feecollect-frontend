@@ -1,191 +1,156 @@
-import React, { useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ArrowUp } from 'lucide-react';
 
+const testimonials = [
+  {
+    quote: "Contrary to popular belief, Lorem Ipsum is not simply dummy text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, look.",
+    name: "Johndove",
+    role: "Data Analysis",
+    img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&h=100&fit=crop&crop=face",
+  },
+  {
+    quote: "Contrary to popular belief, Lorem Ipsum is not simply dummy text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, look.",
+    name: "Johndove",
+    role: "Data Analysis",
+    img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=100&h=100&fit=crop&crop=face",
+  },
+  {
+    quote: "Contrary to popular belief, Lorem Ipsum is not simply dummy text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, look.",
+    name: "Johndove",
+    role: "Data Analysis",
+    img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face",
+  },
+  {
+    quote: "Contrary to popular belief, Lorem Ipsum is not simply dummy text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, look.",
+    name: "Johndove",
+    role: "Data Analysis",
+    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
+  },
+  {
+    quote: "Contrary to popular belief, Lorem Ipsum is not simply dummy text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, look.",
+    name: "Johndove",
+    role: "Data Analysis",
+    img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face",
+  },
+  {
+    quote: "Contrary to popular belief, Lorem Ipsum is not simply dummy text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, look.",
+    name: "Johndove",
+    role: "Data Analysis",
+    img: "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=100&h=100&fit=crop&crop=face",
+  },
+];
+
+function TestimonialCard({ t }) {
+  return (
+    <div style={{ minWidth: 320, maxWidth: 320, marginRight: 28, flexShrink: 0 }}>
+      {/* Quote box */}
+      <div style={{ background: "#7EC870", borderRadius: 8, padding: "24px 22px", position: "relative" }}>
+        <span style={{ fontSize: 44, color: "rgba(255,255,255,0.85)", fontFamily: "Georgia,serif", lineHeight: 1 }}>❝</span>
+        <p style={{ color: "#fff", fontSize: 14.5, lineHeight: 1.7, marginTop: 4 }}>{t.quote}</p>
+        {/* Arrow pointer */}
+        <div style={{
+          position: "absolute", bottom: -20, left: 36,
+          width: 0, height: 0,
+          borderLeft: "20px solid transparent",
+          borderRight: "20px solid transparent",
+          borderTop: "20px solid #7EC870",
+        }} />
+      </div>
+      {/* Person */}
+      <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 32, paddingLeft: 8 }}>
+        <img src={t.img} alt={t.name} style={{ width: 54, height: 54, borderRadius: "50%", objectFit: "cover", border: "2.5px solid #7EC870" }} />
+        <div>
+          <p style={{ fontWeight: 700, color: "#111", fontSize: 15 }}>{t.name}</p>
+          <p style={{ color: "#888", fontSize: 13 }}>{t.role}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SustainabilitySection() {
-  const [activeTab, setActiveTab] = useState('khadi');
+  const trackRef = useRef(null);
+  const animRef = useRef(null);
+  const posRef = useRef(0);
+  const pausedRef = useRef(false);
 
-  const categories = [
-    {
-      id: 'khadi',
-      title: 'Khadi',
-      subtitle: 'From Loom to Learning.',
-      icon: '🌾',
-      bgColor: 'bg-blue-700',
-      textColor: 'text-white'
-    },
-    {
-      id: 'climate',
-      title: 'Climate Change',
-      subtitle: 'Awareness & Action',
-      icon: '🌍',
-      bgColor: 'bg-white',
-      textColor: 'text-gray-800',
-      borderColor: 'border-2 border-blue-300'
-    },
-    {
-      id: 'forest',
-      title: 'School Forest',
-      subtitle: 'Beyond Books, Beneath the Canopy',
-      icon: '🌳',
-      bgColor: 'bg-white',
-      textColor: 'text-gray-800',
-      borderColor: 'border-2 border-purple-300'
-    },
-    {
-      id: 'solar',
-      title: 'Solar Energy',
-      subtitle: 'Sun-powered Learning',
-      icon: '☀️',
-      bgColor: 'bg-white',
-      textColor: 'text-orange-600',
-      borderColor: 'border-2 border-orange-300'
-    },
-    {
-      id: 'zerowaste',
-      title: 'Zero Waste',
-      subtitle: 'Reduce Your Consumption',
-      icon: '♻️',
-      bgColor: 'bg-white',
-      textColor: 'text-red-600',
-      borderColor: 'border-2 border-red-300'
-    },
-    {
-      id: 'millets',
-      title: 'Millets',
-      subtitle: 'Tiny Grains, Mighty Gains',
-      icon: '🌾',
-      bgColor: 'bg-white',
-      textColor: 'text-green-600',
-      borderColor: 'border-2 border-green-300'
-    }
-  ];
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
 
-  const content = {
-  khadi: {
-    title: 'Khadi - From Loom to Learning',
-    description:
-      "At Thawe Central School, we proudly promote sustainability, patriotism, and cultural legacy. By embracing Khadi–India's symbol of self-reliance and simplicity–we instill values of unity, determination, and environmental responsibility in our students. As an eco-friendly, hand-spun fabric supporting local artisans, Khadi reflects our commitment to conscious living. Through its use in uniforms and events, we blend tradition with modernity, inspiring students to cherish heritage and work toward a sustainable future.",
-    image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600'
-  },
+    // Clone all cards for seamless loop
+    const original = track.querySelector(".marquee-inner");
+    const clone = original.cloneNode(true);
+    clone.setAttribute("aria-hidden", "true");
+    track.appendChild(clone);
 
-  climate: {
-    title: 'Climate Change - Awareness & Action',
-    description:
-      'We educate our students about climate change through workshops, seminars, and hands-on activities. Our curriculum integrates environmental science, encouraging students to understand global warming, carbon footprint, and sustainable practices.',
-    image: 'https://images.unsplash.com/photo-1569163139394-de4798aa62b0?w=600'
-  },
+    const speed = 0.8;
 
-  forest: {
-    title: 'School Forest - Beyond Books, Beneath the Canopy',
-    description:
-      'Our school forest serves as an outdoor classroom where students learn about biodiversity, ecology, and conservation. This green sanctuary provides a hands-on learning environment.',
-    image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600'
-  },
+    const step = () => {
+      if (!pausedRef.current) {
+        posRef.current -= speed;
+        const totalW = original.offsetWidth;
+        if (Math.abs(posRef.current) >= totalW) posRef.current = 0;
+        track.style.transform = `translateX(${posRef.current}px)`;
+      }
+      animRef.current = requestAnimationFrame(step);
+    };
 
-  solar: {
-    title: 'Solar Energy - Sun-powered Learning',
-    description:
-      'Thawe Central School harnesses solar energy to power our facilities, demonstrating renewable energy in action. Our solar panels serve as educational tools for teaching clean energy.',
-    image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600'
-  },
+    animRef.current = requestAnimationFrame(step);
 
-  zerowaste: {
-    title: 'Zero Waste - Reduce Your Consumption',
-    description:
-      'We practice zero waste principles through recycling programs, composting initiatives, and waste segregation. Students learn to reduce, reuse, and recycle.',
-    image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600'
-  },
+    return () => cancelAnimationFrame(animRef.current);
+  }, []);
 
-  millets: {
-    title: 'Millets - Tiny Grains, Mighty Gains',
-    description:
-      'We promote millets as a sustainable and nutritious food choice. Our cafeteria incorporates millet-based meals, teaching students about traditional grains and their health benefits.',
-    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600'
-  }
-};
-
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
-    <section className="relative min-h-screen overflow-hidden">
-      {/* Yellow Diagonal Background */}
-      <div className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-br from-yellow-400 to-yellow-500">
-        <div className="absolute top-0 right-0 w-full h-full bg-blue-500" 
-             style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }}>
-        </div>
+    <section style={{ background: "#fff", padding: "60px 0", overflow: "hidden" }}>
+
+      <div style={{ maxWidth: 1200, margin: "0 auto", paddingLeft: 24, paddingRight: 24 }}>
+        {/* Heading */}
+        <h2 style={{ fontSize: "1.75rem", fontWeight: 800, color: "#111", marginBottom: 8 }}>
+          What Student Say's About Courses
+        </h2>
+        <div style={{ width: 64, height: 3, background: "#e6a817", borderRadius: 2, marginBottom: 40 }} />
       </div>
 
-      {/* Blue Background */}
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-500 to-blue-600"></div>
-
-      {/* Content */}
-      <div className="relative z-10 py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Title */}
-          <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-12 uppercase tracking-wider">
-            Sustainability
-          </h2>
-
-          {/* Category Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-12">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveTab(category.id)}
-                className={`${category.bgColor} ${category.textColor} ${category.borderColor || ''} 
-                  rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105
-                  ${activeTab === category.id ? 'ring-4 ring-white' : ''}`}
-              >
-                <div className="text-4xl mb-3">{category.icon}</div>
-                <h3 className="font-bold text-lg mb-1">{category.title}</h3>
-                <p className="text-sm opacity-90">{category.subtitle}</p>
-              </button>
+      {/* Scrolling strip — full width, no padding */}
+      <div
+        style={{ overflow: "hidden", width: "100%", cursor: "pointer" }}
+        onMouseEnter={() => { pausedRef.current = true; }}
+        onMouseLeave={() => { pausedRef.current = false; }}
+      >
+        <div
+          ref={trackRef}
+          style={{ display: "flex", willChange: "transform", paddingBottom: 16 }}
+        >
+          <div
+            className="marquee-inner"
+            style={{ display: "flex", paddingLeft: 24 }}
+          >
+            {testimonials.map((t, i) => (
+              <TestimonialCard key={i} t={t} />
             ))}
           </div>
-
-          {/* Content Area */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 lg:p-12">
-            <div className="grid lg:grid-cols-2 gap-8 items-center">
-              {/* Text Content */}
-              <div>
-                <h3 className="text-3xl font-bold text-blue-700 mb-4 border-b-4 border-blue-500 pb-2 inline-block">
-                  {content[activeTab].title}
-                </h3>
-                <p className="text-gray-700 leading-relaxed text-lg">
-                  {content[activeTab].description}
-                </p>
-                
-                {/* Decorative Element */}
-                <div className="mt-6 flex items-center gap-2">
-                  <div className="w-3 h-3 bg-red-500 rotate-45"></div>
-                  <div className="w-3 h-3 bg-orange-500 rotate-45"></div>
-                  <div className="w-3 h-3 bg-yellow-500 rotate-45"></div>
-                </div>
-              </div>
-
-              {/* Image */}
-              <div className="relative">
-                <img
-                  src={content[activeTab].image}
-                  alt={content[activeTab].title}
-                  className="rounded-2xl shadow-lg w-full h-80 object-cover"
-                />
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* Scroll to Top Button */}
+      {/* Scroll to top */}
       <button
         onClick={scrollToTop}
-        className="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 z-50"
+        style={{
+          position: "fixed", bottom: 32, right: 32,
+          background: "#7EC870", color: "#fff",
+          border: "none", borderRadius: "50%",
+          width: 48, height: 48,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          cursor: "pointer", zIndex: 50,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+        }}
       >
-        <ArrowUp className="w-6 h-6" />
+        <ArrowUp size={20} />
       </button>
+
     </section>
   );
 }

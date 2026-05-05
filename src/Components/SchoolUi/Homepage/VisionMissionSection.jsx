@@ -4,25 +4,31 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const quotes = [
+  `"Education is not just about acquiring knowledge; it's about transforming lives and building character. At Gyan Niketan, we believe in nurturing not just academic excellence, but also moral values, leadership qualities, and social responsibility."`,
+  `"When I founded Gyan Niketan in 1986, my vision was simple yet profound—to create an institution that would not only impart quality education but also shape responsible citizens who contribute positively to society. Today, as I look back at our journey, I am proud to see how this vision has become a reality. Our students have excelled academically and grown into compassionate leaders, innovative thinkers, and responsible global citizens."`,
+];
+
 export default function VisionMissionSection() {
   const sectionRef = useRef(null);
-  const visionRef = useRef(null);
-  const missionRef = useRef(null);
+  const imgRef = useRef(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
     gsap.fromTo(
-      [visionRef.current, missionRef.current],
-      { y: 60, opacity: 0 },
+      imgRef.current,
+      { x: -60, opacity: 0 },
       {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: "power3.out",
-        stagger: 0.25,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-        },
+        x: 0, opacity: 1, duration: 1, ease: "power3.out",
+        scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
+      }
+    );
+    gsap.fromTo(
+      contentRef.current,
+      { x: 60, opacity: 0 },
+      {
+        x: 0, opacity: 1, duration: 1, ease: "power3.out",
+        scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
       }
     );
   }, []);
@@ -30,79 +36,78 @@ export default function VisionMissionSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-28 bg-[#fde9d6] overflow-hidden"
+      className="relative py-20 bg-white overflow-hidden"
     >
-      {/* Soft background circles */}
-      <div className="absolute -top-24 -left-24 w-96 h-96 bg-orange-200/40 rounded-full blur-3xl" />
-      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-200/40 rounded-full blur-3xl" />
+      {/* Faint bg circle */}
+      <div
+        className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-20 translate-x-1/2 -translate-y-1/2"
+        style={{ background: "#7EC870" }}
+      />
 
       <div className="relative max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden shadow-2xl">
 
-          {/* OUR VISION */}
-          <div
-            ref={visionRef}
-            className="bg-[#0b4a91] text-white p-12 md:p-14 relative"
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center text-2xl">
-                👁️
-              </div>
-              <h3 className="text-2xl font-bold tracking-wide uppercase">
-                Our Vision
-              </h3>
-            </div>
+        {/* Label */}
+        <p
+          className="text-xs font-bold tracking-[0.2em] uppercase mb-2"
+          style={{ color: "#7EC870" }}
+        >
+          From The Desk
+        </p>
 
-            <div className="w-20 h-[3px] bg-yellow-400 mb-6" />
+        {/* Heading */}
+        <h2 className="text-4xl font-extrabold text-gray-900 mb-10">
+          Founder's{" "}
+          <span style={{ color: "#7EC870" }}>Message</span>
+        </h2>
 
-            <p className="leading-relaxed text-white/90 text-[15.5px]">
-              Blending academic excellence with Indian values, creativity and
-              innovation, we aim to nurture future-ready individuals.
-              Sustainable, inclusive and technologically advanced learning
-              environments empower students to lead with integrity, compassion
-              and global awareness.
-            </p>
+        {/* Body */}
+        <div className="flex flex-col md:flex-row gap-12 items-start">
 
-            {/* Accent */}
-            <div className="absolute bottom-6 left-6 flex gap-2">
-              <span className="w-3 h-3 bg-yellow-400 rounded-sm" />
-              <span className="w-3 h-3 bg-red-400 rounded-sm" />
-              <span className="w-3 h-3 bg-blue-400 rounded-sm" />
-            </div>
-          </div>
-
-          {/* OUR MISSION */}
-          <div
-            ref={missionRef}
-            className="bg-[#ef4136] text-white p-12 md:p-14 relative"
-          >
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center text-2xl">
-                🎯
-              </div>
-              <h3 className="text-2xl font-bold tracking-wide uppercase">
-                Our Mission
-              </h3>
-            </div>
-
-            <div className="w-20 h-[3px] bg-yellow-400 mb-6" />
-
-            <p className="leading-relaxed text-white/90 text-[15.5px]">
-              With emphasis on creating a positive and inclusive campus, we
-              strive to educate with a global perspective. Infusion of latest
-              technology enhances each student’s learning curve. Respect for the
-              environment through community service and fostering love for
-              Indian art and culture defines our commitment to society.
-            </p>
-
-            {/* Accent */}
-            <div className="absolute bottom-6 right-6 flex gap-2">
-              <span className="w-3 h-3 bg-yellow-400 rounded-sm" />
-              <span className="w-3 h-3 bg-red-400 rounded-sm" />
-              <span className="w-3 h-3 bg-blue-400 rounded-sm" />
+          {/* Left — Photo */}
+          <div ref={imgRef} className="flex-shrink-0">
+            <div className="relative w-[300px]">
+              {/* Green corner accent */}
+              <div
+                className="absolute -bottom-3 -left-3 w-full h-full rounded-2xl z-0"
+                style={{ border: "2px solid #7EC870" }}
+              />
+              <img
+                src="https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=400&h=480&fit=crop&crop=face"
+                alt="Founder"
+                className="relative z-10 w-full h-[380px] object-cover rounded-2xl"
+              />
             </div>
           </div>
 
+          {/* Right — Quotes + Name */}
+          <div ref={contentRef} className="flex-1 flex flex-col gap-6 pt-2">
+
+            {quotes.map((q, i) => (
+              <div key={i} className="flex gap-4">
+                <div
+                  className="w-1 flex-shrink-0 rounded-full"
+                  style={{ background: "#7EC870" }}
+                />
+                <p className="text-gray-600 italic leading-relaxed text-[15.5px]">
+                  {q}
+                </p>
+              </div>
+            ))}
+
+            {/* Name */}
+            <div className="mt-4">
+              <p className="text-gray-900 font-bold text-lg">
+                Padma Shree Acharya Kishore Kunal
+              </p>
+              <p
+                className="font-medium text-sm mt-1"
+                style={{ color: "#7EC870" }}
+              >
+                Founder, Gyan Niketan School, Patna
+              </p>
+            </div>
+
+          </div>
         </div>
       </div>
     </section>
