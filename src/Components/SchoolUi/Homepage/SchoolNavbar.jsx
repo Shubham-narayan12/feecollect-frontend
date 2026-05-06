@@ -67,9 +67,9 @@ function SchoolNavbar() {
     <div className="sticky top-0 z-50 bg-white shadow">
       <NewsTicker />
 
-      <nav className="flex items-center justify-between px-6 h-20">
+      <nav className="flex items-center justify-between px-6 h-23">
         {/* LOGO */}
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-0">
           <img src="/logo.png" alt="logo" className="w-40 h-40rounded-full" />
           <div>
             <h1 className="text-lg font-bold">GREEN FIELD SCHOOL</h1>

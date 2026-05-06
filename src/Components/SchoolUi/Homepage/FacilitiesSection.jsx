@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { ArrowRight } from 'lucide-react';
+import React, { useEffect, useRef } from "react";
+import { ArrowRight } from "lucide-react";
 
 export default function FacilitiesSection() {
   const scrollRef = useRef(null);
@@ -7,55 +7,48 @@ export default function FacilitiesSection() {
   const facilities = [
     {
       id: 1,
-      title: 'JIMMY JOLLEY PARK',
-      image: 'https://images.unsplash.com/photo-1587691592099-24045742c181?w=800',
-      icon: '🏃',
-      color: 'bg-orange-500',
-      ribbon: 'bg-orange-500'
+      title: "JIMMY JOLLEY PARK",
+      image:
+        "https://images.unsplash.com/photo-1587691592099-24045742c181?w=800",
+      icon: "🏃",
     },
     {
       id: 2,
-      title: 'ACTIVITY ROOM',
-      image: 'https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/employees2-Aq2X4eKWgOILDXDB.png',
-      icon: '🎨',
-      color: 'bg-blue-600',
-      ribbon: 'bg-blue-600'
+      title: "ACTIVITY ROOM",
+      image:
+        "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/employees2-Aq2X4eKWgOILDXDB.png",
+      icon: "🎨",
     },
     {
       id: 3,
-      title: 'DANCE & MUSIC STUDIO',
-      image: 'https://cdn.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/cdn-builder-placeholders/grid-gallery/woman-with-flowers-in-hair.png',
-      icon: '🎵',
-      color: 'bg-green-500',
-      ribbon: 'bg-green-500'
+      title: "DANCE & MUSIC STUDIO",
+      image:
+        "https://cdn.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/cdn-builder-placeholders/grid-gallery/woman-with-flowers-in-hair.png",
+      icon: "🎵",
     },
     {
       id: 4,
-      title: 'TECH SAVY CLASSES',
-      image: 'https://assets.zyrosite.com/dOqNXeekPrHE45km/computer-lab-school-YanzpDq96oFZ71qO.jpg',
-      icon: '💻',
-      color: 'bg-orange-500',
-      ribbon: 'bg-orange-500'
+      title: "TECH SAVVY CLASSES",
+      image:
+        "https://assets.zyrosite.com/dOqNXeekPrHE45km/computer-lab-school-YanzpDq96oFZ71qO.jpg",
+      icon: "💻",
     },
     {
       id: 5,
-      title: 'LIBRARY',
-      image: 'https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/student-123-A1arvLarxnCR1KWO.webp',
-      icon: '📚',
-      color: 'bg-purple-600',
-      ribbon: 'bg-purple-600'
+      title: "LIBRARY",
+      image:
+        "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/student-123-A1arvLarxnCR1KWO.webp",
+      icon: "📚",
     },
     {
       id: 6,
-      title: 'SPORTS COMPLEX',
-      image: 'https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/student-123-A1arvLarxnCR1KWO.webp',
-      icon: '⚽',
-      color: 'bg-red-500',
-      ribbon: 'bg-red-500'
-    }
+      title: "SPORTS COMPLEX",
+      image:
+        "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=205,h=205,fit=crop/dOqNXeekPrHE45km/student-123-A1arvLarxnCR1KWO.webp",
+      icon: "⚽",
+    },
   ];
 
-  // Duplicate facilities for seamless loop
   const duplicatedFacilities = [...facilities, ...facilities];
 
   useEffect(() => {
@@ -64,102 +57,159 @@ export default function FacilitiesSection() {
 
     let animationFrameId;
     let scrollPosition = 0;
-    const scrollSpeed = 1; // pixels per frame
+    const scrollSpeed = 1;
 
     const scroll = () => {
       scrollPosition += scrollSpeed;
-      
-      // Reset position when first set of images has scrolled completely
       const maxScroll = scrollContainer.scrollWidth / 2;
-      if (scrollPosition >= maxScroll) {
-        scrollPosition = 0;
-      }
-      
+      if (scrollPosition >= maxScroll) scrollPosition = 0;
       scrollContainer.scrollLeft = scrollPosition;
       animationFrameId = requestAnimationFrame(scroll);
     };
 
     animationFrameId = requestAnimationFrame(scroll);
 
-    // Pause on hover
-    const handleMouseEnter = () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-
+    const handleMouseEnter = () => cancelAnimationFrame(animationFrameId);
     const handleMouseLeave = () => {
       animationFrameId = requestAnimationFrame(scroll);
     };
 
-    scrollContainer.addEventListener('mouseenter', handleMouseEnter);
-    scrollContainer.addEventListener('mouseleave', handleMouseLeave);
+    scrollContainer.addEventListener("mouseenter", handleMouseEnter);
+    scrollContainer.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      scrollContainer.removeEventListener('mouseenter', handleMouseEnter);
-      scrollContainer.removeEventListener('mouseleave', handleMouseLeave);
+      scrollContainer.removeEventListener("mouseenter", handleMouseEnter);
+      scrollContainer.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, []);
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section
+      className="py-16 px-4 sm:px-6 lg:px-8"
+      style={{ background: "#f4f9f4" }}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 uppercase tracking-wide">
-            FACILITIES
-          </h2>
-          <p className="text-gray-600 text-lg max-w-4xl leading-relaxed mb-6">
-            At Thawe Central School, education transcends academics, creating an exciting, caring and supportive space where students thrive and all-round development takes centre stage.
-          </p>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-md shadow-lg transition-all duration-300 flex items-center gap-2 group">
-            View All
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
+        <div className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+          <div>
+            {/* Top accent bar */}
+            <div
+              style={{
+                width: "48px",
+                height: "5px",
+                background: "#2e7d32",
+                marginBottom: "12px",
+              }}
+            />
+            <h2
+              className="font-bold font-serif uppercase tracking-widest"
+              style={{ color: "#1b5e20", fontSize: "clamp(28px, 4vw, 44px)" }}
+            >
+              Our Facilities
+            </h2>
+            <p
+              className="mt-3 font-serif"
+              style={{
+                color: "#4a4a4a",
+                fontSize: "15px",
+                maxWidth: "600px",
+                lineHeight: 1.7,
+              }}
+            >
+              At Thawe Central School, education transcends academics — creating
+              an exciting, caring and supportive space where students thrive and
+              all-round development takes centre stage.
+            </p>
+          </div>
+
+         
         </div>
 
-        {/* Scrolling Images Container */}
+        {/* Scrolling Container */}
         <div className="relative overflow-hidden">
-          {/* Gradient Overlays */}
-          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none"></div>
+          {/* Gradient fade edges */}
+          <div
+            className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
+            style={{
+              background: "linear-gradient(to right, #f4f9f4, transparent)",
+            }}
+          />
+          <div
+            className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
+            style={{
+              background: "linear-gradient(to left, #f4f9f4, transparent)",
+            }}
+          />
 
-          {/* Scrolling Container */}
           <div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-hidden"
-            style={{ scrollBehavior: 'auto' }}
+            className="flex gap-5 overflow-x-hidden"
+            style={{ scrollBehavior: "auto" }}
           >
             {duplicatedFacilities.map((facility, index) => (
               <div
                 key={`${facility.id}-${index}`}
-                className="flex-shrink-0 w-80 md:w-96 relative group cursor-pointer"
+                className="flex-shrink-0 group cursor-pointer"
+                style={{ width: "300px" }}
               >
-                {/* Corner Ribbon */}
-                <div className="absolute top-0 right-0 z-20">
-                  <div className={`${facility.ribbon} w-20 h-20 flex items-center justify-center text-white text-3xl shadow-lg`}
-                       style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }}>
-                    <span className="absolute top-2 right-2">{facility.icon}</span>
-                  </div>
-                </div>
-
-                {/* Image Card */}
-                <div className="relative h-96 rounded-xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-300">
+                {/* Card — sharp edges */}
+                <div
+                  className="relative overflow-hidden"
+                  style={{
+                    height: "380px",
+                    border: "2px solid #2e7d32",
+                    boxShadow: "4px 4px 0px #2e7d32",
+                    transition: "box-shadow 0.2s, transform 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = "6px 6px 0px #1b5e20";
+                    e.currentTarget.style.transform = "translate(-2px, -2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = "4px 4px 0px #2e7d32";
+                    e.currentTarget.style.transform = "translate(0, 0)";
+                  }}
+                >
+                  {/* Image */}
                   <img
                     src={facility.image}
                     alt={facility.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-                  
-                  {/* Title Badge */}
-                  <div className="absolute bottom-0 left-0 right-0">
-                    <div className={`${facility.ribbon} px-6 py-3`}>
-                      <h3 className="text-white font-bold text-lg text-center uppercase tracking-wide">
-                        {facility.title}
-                      </h3>
-                    </div>
+
+                  {/* Dark gradient overlay */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 60%, transparent 100%)",
+                    }}
+                  />
+
+                  {/* Top-right icon box — sharp */}
+                  <div
+                    className="absolute top-0 right-0 flex items-center justify-center text-2xl z-20"
+                    style={{
+                      width: "52px",
+                      height: "52px",
+                      background: "#2e7d32",
+                    }}
+                  >
+                    {facility.icon}
+                  </div>
+
+                  {/* Bottom title bar — sharp */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 z-10"
+                    style={{ background: "#2e7d32", padding: "12px 16px" }}
+                  >
+                    <h3
+                      className="font-bold font-serif text-center uppercase tracking-widest text-white"
+                      style={{ fontSize: "13px", letterSpacing: "2px" }}
+                    >
+                      {facility.title}
+                    </h3>
                   </div>
                 </div>
               </div>
@@ -167,9 +217,12 @@ export default function FacilitiesSection() {
           </div>
         </div>
 
-        {/* Optional: Scroll Indicator */}
-        <div className="text-center mt-6 text-gray-500 text-sm">
-          Hover to pause • Auto-scrolling
+        {/* Footer note */}
+        <div
+          className="text-center mt-6 font-serif"
+          style={{ color: "#4CAF50", fontSize: "13px", letterSpacing: "1px" }}
+        >
+          ● Hover to pause &nbsp;·&nbsp; Auto-scrolling ●
         </div>
       </div>
     </section>
