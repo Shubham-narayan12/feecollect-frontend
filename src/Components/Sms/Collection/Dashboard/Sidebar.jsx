@@ -3,11 +3,11 @@ import { NavLink } from "react-router-dom";
 import { PieChart, Users, CreditCard, BadgeCheck } from "lucide-react";
 
 /* ---------------- TEMP ADMIN DATA (Later replace with backend) ---------------- */
-const ADMIN = {
-  name: "Shubham Yadav",
-  role: "Super Admin",
-  email: "admin@schoolfee.com",
-};
+const admin = JSON.parse(localStorage.getItem("admin"));
+  const adminName = admin?.name || "Admin";
+  const adminEmail = admin?.email || "admin@school.com";
+  const adminRole = admin?.role || "Admin";
+  const avatarLetter = adminName.charAt(0).toUpperCase();
 
 const SidebarIcon = ({ icon: Icon }) => <Icon size={20} />;
 
@@ -81,14 +81,16 @@ export default function Sidebar() {
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full blur-md opacity-50" />
                 <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-lg">
-                  {ADMIN.name.charAt(0)}
+                  {avatarLetter}
                 </div>
               </div>
 
               <div className="flex-1">
-                <p className="text-sm font-bold text-white">{ADMIN.name}</p>
-                <p className="text-xs text-emerald-400">{ADMIN.role}</p>
-                <p className="text-[11px] text-slate-400 truncate">{ADMIN.email}</p>
+                <p className="text-sm font-bold text-white">{adminName}</p>
+                <p className="text-xs text-emerald-400">{adminEmail}</p>
+                <p className="text-[11px] text-slate-400 truncate">
+                  {adminRole}
+                </p>
               </div>
             </div>
 

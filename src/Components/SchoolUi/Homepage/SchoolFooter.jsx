@@ -12,10 +12,7 @@ const SchoolFooter = () => {
         className="w-100 h-55 mx-auto mb-3 object-contain"
       />
 
-      {/* Year */}
-      <p className="text-red-500 text-sm font-medium mb-1">
-        From 1999-2024
-      </p>
+      
 
       {/* School Name */}
       <h2 className="text-4xl font-bold text-green-700 mb-3">
@@ -24,13 +21,13 @@ const SchoolFooter = () => {
 
       {/* Address */}
       <p className="text-gray-600 text-sm max-w-xl mx-auto leading-relaxed">
-        AT - BEDUTOLA, POST OFFICE - THAWE, DIST - GOPALGANJ,
-        PIN CODE - 841440, BIHAR, INDIA
+        AT - Lohiya Patna, Patna-14, DIST - Patna,
+        PIN CODE - 800014, BIHAR, INDIA
       </p>
 
       {/* Phone */}
       <p className="mt-3 text-gray-700">
-        📞 +91 - 9471404548
+        📞 +91 - 9334205858
       </p>
 
       {/* Email */}
