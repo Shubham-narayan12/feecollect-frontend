@@ -24,3 +24,7 @@ export const downloadReceiptPdf = async (fileName) => {
   link.remove();
   window.URL.revokeObjectURL(url);
 };
+
+export const searchRecipt = (formData) => {
+  return axiosInstance.post("/receipt/search-recipt", formData);
+};
