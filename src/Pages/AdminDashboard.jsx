@@ -14,6 +14,11 @@ import FeeSettings from "../Pages/FeeSettings";
 import SchoolAdminProfile from "../Pages/SchoolAdminProfile";
 
 import IDCardComponent from "../Components/Sms/Collection/Dashboard/IDCardComponent";
+import Recipt from "../Components/Sms/Collection/Dashboard/Recipt";
+import ReciptDetail from "../Components/Sms/Collection/Dashboard/ReciptDetail";
+import Banner from "../Components/Sms/Collection/Dashboard/Banner";
+import Gallery from "../Components/Sms/Collection/Dashboard/Gallery";
+import NoticeAndEvent from "../Components/Sms/Collection/Dashboard/NoticeAndEvent";
 
 export default function AdminDashboard() {
   return (
@@ -40,6 +45,14 @@ export default function AdminDashboard() {
             <Route path="reports" element={<Reports />} />
             <Route path="admission" element={<AdmissionForm />} />
             <Route path="profile" element={<SchoolAdminProfile />} />
+            <Route path="recipt" element={<Recipt />} />
+            <Route path="recipt/1" element={<ReciptDetail />} />
+            <Route path="website/banner" element={<Banner />} />
+            <Route path="website/gallery" element={<Gallery />} />
+            <Route
+              path="website/notice-and-event"
+              element={<NoticeAndEvent />}
+            />
 
             <Route path="id-cards" element={<IDCardComponent />} />
 

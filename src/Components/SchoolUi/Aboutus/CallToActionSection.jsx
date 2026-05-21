@@ -39,7 +39,7 @@ const CallToActionSection = () => {
           <p className="text-gray-400 text-lg mb-10 max-w-lg leading-relaxed">
             Whether you have a request, a query, or want to know about{" "}
             <span className="text-white font-bold border-b-2 border-green-400/50">
-              THAWE CENTRAL SCHOOL
+              GREEN FIELD SCHOOL
             </span>
             , we are here to help you.
           </p>
@@ -49,12 +49,12 @@ const CallToActionSection = () => {
             <ContactInfo
               icon={<FaMapMarkerAlt />}
               title="Our Location"
-              desc="AT- BEDUTOLA, PO- THAWE, DIST- GOPALGANJ, 841440"
+              desc="Lohiya Patna, Patna-14, DIST - Patna, PIN CODE - 800014, BIHAR, INDIA"
             />
             <ContactInfo
               icon={<FaPhoneAlt />}
               title="Call Support"
-              desc="+91 94714 04548, +91 70501 54850"
+              desc="+91 9334205858, +91 6206422109"
             />
             <ContactInfo
               icon={<FaClock />}

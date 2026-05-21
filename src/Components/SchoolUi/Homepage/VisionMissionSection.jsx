@@ -6,8 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const quotes = [
-  `"Education is not just about acquiring knowledge; it's about transforming lives and building character."`,
-  `"When I founded Green Field School, my vision was to create responsible citizens and future leaders."`,
+  `“Education is not only about gaining knowledge, but also about shaping values, inspiring dreams, and building a brighter future for every child. At Green Field School, we believe that true learning creates confidence, discipline, and compassion in young minds. Our mission is to nurture students with wisdom, creativity, and strong moral character so they can succeed in every aspect of life. We strive to provide an environment where curiosity is encouraged, talents are discovered, and leadership qualities are developed. Every student is guided to become a responsible citizen who contributes positively to society. With dedication, innovation, and care, we prepare children to face the challenges of tomorrow with courage and determination. Together, we are building not just educated students, but future leaders of the nation.”`,
 ];
 
 export default function VisionMissionSection() {
@@ -57,7 +56,7 @@ export default function VisionMissionSection() {
 
         {/* Heading */}
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-8 sm:mb-10">
-          Founder's <span className="text-green-500">Message</span>
+          Director's <span className="text-green-500">Message</span>
         </h2>
 
         {/* Body */}
@@ -69,7 +68,7 @@ export default function VisionMissionSection() {
               <div className="absolute -bottom-3 -left-3 w-full h-full rounded-2xl border-2 border-green-500" />
 
               <img
-                src="https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=400"
+                src="/Director.png"
                 alt="Founder"
                 className="relative z-10 w-full h-64 sm:h-72 md:h-[360px] object-cover rounded-2xl"
               />
@@ -90,10 +89,10 @@ export default function VisionMissionSection() {
             {/* Name */}
             <div className="mt-4">
               <p className="text-gray-900 font-bold text-base sm:text-lg">
-                Dr. Rajesh Kumar
+                ANITA KUMARI
               </p>
               <p className="text-green-500 text-xs sm:text-sm mt-1">
-                Founder, Green Field School
+                Director, Green Field School
               </p>
             </div>
           </div>

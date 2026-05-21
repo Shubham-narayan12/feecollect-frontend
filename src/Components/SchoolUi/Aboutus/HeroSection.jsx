@@ -9,8 +9,8 @@ const HeroSection = () => {
         style={{ height: "230px" }}
       >
         <img
-          src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=2448,h=1310,fit=crop/dOqNXeekPrHE45km/tsc-school-1---copy-AGBvZob37oSBNpvr.jpg"
-          alt="School Building"
+          src="/school main banner.jpeg"
+          alt="School Banner"
           className="w-full h-full object-cover"
         />
         <div
@@ -21,7 +21,6 @@ const HeroSection = () => {
 
       {/* ── WELCOME SECTION ── */}
       <div className="w-full bg-white py-14">
-        {/* 🔥 Removed max-width restriction */}
         <div className="w-full flex flex-col md:flex-row gap-10 items-start px-6 md:px-16 lg:px-24">
           {/* Left — Image */}
           <div className="flex-shrink-0 w-full md:w-[420px]">
@@ -32,6 +31,7 @@ const HeroSection = () => {
               style={{ height: "360px" }}
             />
           </div>
+
           <div>
             {/* Heading */}
             <h2
