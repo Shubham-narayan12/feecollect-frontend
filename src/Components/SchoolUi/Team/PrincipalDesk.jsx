@@ -1,16 +1,16 @@
 import React from "react";
-import { Quote, Award, Target, Heart } from "lucide-react";
+import { Quote } from "lucide-react";
 
 const PrincipalDesk = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-700 to-green-900 py-8 px-4">
+      <div className="bg-gradient-to-r from-green-600 to-green-800 py-8 px-4">
         <div className="container mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold text-white text-center">
             Principal's Desk
           </h1>
-          <div className="w-24 h-1 bg-yellow-400 mx-auto mt-4"></div>
+          <div className="w-24 h-1 bg-white mx-auto mt-4"></div>
         </div>
       </div>
 
@@ -18,64 +18,73 @@ const PrincipalDesk = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-6xl mx-auto">
           {/* Profile Section */}
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-12 border border-green-100">
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-12">
             <div className="grid md:grid-cols-5 gap-8 p-8 md:p-12">
               {/* Photo */}
               <div className="md:col-span-2 flex flex-col items-center">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-600 to-green-800 rounded-2xl rotate-3"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-700 rounded-2xl rotate-3"></div>
                   <img
-                    src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=328,h=425,fit=crop/dOqNXeekPrHE45km/012345-mjE5XW77zMIz4lbY.png"
+                    src="/principal.jpeg"
                     alt="Principal"
-                    className="relative w-64 h-80 object-cover rounded-2xl shadow-xl"
+                    className="relative w-64 h-80 object-cover object-top rounded-2xl shadow-xl"
                   />
                 </div>
 
                 <div className="mt-6 text-center">
                   <h2 className="text-2xl font-bold text-gray-800">
-                    Mr. Majibullah
+                    Mr. Rajesh Kumar
                   </h2>
-                  <p className="text-green-700 font-semibold text-lg mt-1">
+                  <p className="text-green-600 font-semibold text-lg mt-1">
                     Principal
                   </p>
-                  <p className="text-gray-600 mt-2">M. A. Urdu</p>
-                  <p className="text-gray-600">25+ Years of Experience</p>
                 </div>
               </div>
 
               {/* Message */}
               <div className="md:col-span-3">
                 <div className="flex items-start gap-3 mb-6">
-                  <Quote className="w-8 h-8 text-green-700 flex-shrink-0" />
+                  <Quote className="w-8 h-8 text-green-600 flex-shrink-0" />
                   <h3 className="text-2xl font-bold text-gray-800">
-                    A Message of Inspiration
+                    Message from the Principal
                   </h3>
                 </div>
 
                 <div className="space-y-4 text-gray-700 leading-relaxed">
-                  <p>Dear Students and Parents,</p>
+                  <p>Dear Students, Parents, and Guardians,</p>
 
                   <p>
-                    Welcome to Green Field School, where every child's journey
-                    is unique and valued.
+                    Welcome to Green Field School — a place where every child is
+                    valued, every dream is nurtured, and every effort is
+                    celebrated. I am proud to lead this wonderful institution
+                    and work alongside a dedicated team of educators.
                   </p>
 
                   <p>
-                    We focus on both academic excellence and personal growth
-                    through modern education.
+                    Education is not merely about acquiring knowledge; it is
+                    about building character, developing critical thinking, and
+                    preparing students to face real-world challenges with
+                    confidence and integrity.
                   </p>
 
                   <p>
-                    Our teachers ensure personalized attention and holistic
-                    development.
+                    We are committed to providing a safe, inclusive, and
+                    stimulating environment where curiosity is encouraged and
+                    excellence is the standard we set for ourselves every day.
+                  </p>
+
+                  <p>
+                    I urge every student to be disciplined, respectful, and
+                    persistent. Success belongs to those who work hard and never
+                    give up.
                   </p>
 
                   <p className="font-semibold text-green-700 mt-6">
-                    Let’s build a bright future together!
+                    Let us walk this journey of learning together!
                   </p>
 
                   <div className="mt-8">
-                    <p className="font-bold text-gray-800">Mrs. Priya Sharma</p>
+                    <p className="font-bold text-gray-800">Mr. Rajesh Kumar</p>
                     <p className="text-gray-600">Principal</p>
                     <p className="text-gray-600">Green Field School</p>
                   </div>
@@ -84,68 +93,59 @@ const PrincipalDesk = () => {
             </div>
           </div>
 
-          {/* Focus Cards */}
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            {[
-              {
-                icon: Award,
-                title: "Academic Excellence",
-                desc: "Achieving high standards in education",
-              },
-              {
-                icon: Target,
-                title: "Holistic Development",
-                desc: "Overall growth of students",
-              },
-              {
-                icon: Heart,
-                title: "Character Building",
-                desc: "Values and discipline",
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-green-600 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-              >
-                <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-800 rounded-full flex items-center justify-center">
-                    <item.icon className="w-8 h-8 text-white" />
-                  </div>
-                </div>
+          {/* Vision & Mission */}
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <div className="bg-gradient-to-br from-green-600 to-green-800 text-white rounded-2xl p-8 shadow-xl hover:scale-105 transition duration-300">
+              <h3 className="text-3xl font-bold mb-6">Our Vision</h3>
+              <p className="text-lg">
+                To foster a love for learning that empowers students to become
+                thoughtful, capable, and compassionate individuals.
+              </p>
+            </div>
 
-                <h3 className="text-xl font-bold text-center text-gray-800 mb-3">
-                  {item.title}
-                </h3>
-
-                <p className="text-gray-600 text-center">{item.desc}</p>
-              </div>
-            ))}
+            <div className="bg-white border-4 border-green-600 rounded-2xl p-8 shadow-xl hover:scale-105 transition duration-300">
+              <h3 className="text-3xl font-bold mb-6 text-green-700">
+                Our Mission
+              </h3>
+              <p className="text-lg text-gray-700">
+                To deliver an enriching academic experience supported by strong
+                discipline, mentorship, and holistic personal development.
+              </p>
+            </div>
           </div>
 
-          {/* Philosophy Section */}
-          <div className="bg-gradient-to-br from-green-700 to-green-900 rounded-2xl shadow-xl p-8 md:p-12 text-white">
-            <h3 className="text-3xl font-bold text-center mb-8">
-              Our Educational Philosophy
+          {/* Core Values */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            <h3 className="text-3xl font-bold text-center text-green-700 mb-8">
+              Our Commitments
             </h3>
 
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-3 gap-6">
               {[
-                "Student-Centered Learning",
-                "Experiential Learning",
-                "Technology Integration",
-                "Continuous Assessment",
-              ].map((title, index) => (
-                <div key={index} className="space-y-4">
-                  <h4 className="text-xl font-bold flex items-center gap-2">
-                    <span className="w-8 h-8 bg-yellow-400 text-black rounded-full flex items-center justify-center font-bold">
-                      {index + 1}
-                    </span>
-                    {title}
+                {
+                  title: "Discipline",
+                  desc: "Structure that builds character",
+                },
+                {
+                  title: "Academic Excellence",
+                  desc: "Highest learning standards",
+                },
+                { title: "Mentorship", desc: "Guided growth at every step" },
+                { title: "Inclusivity", desc: "Every child belongs here" },
+                { title: "Safety", desc: "A secure space to grow" },
+                {
+                  title: "Accountability",
+                  desc: "Own your actions, own your future",
+                },
+              ].map((value, index) => (
+                <div
+                  key={index}
+                  className="p-6 rounded-xl border-2 border-green-200 hover:border-green-600 hover:shadow-lg transition duration-300 bg-gradient-to-br from-green-50 to-white"
+                >
+                  <h4 className="text-xl font-bold text-green-700 mb-2">
+                    {value.title}
                   </h4>
-
-                  <p className="ml-10 text-white/90">
-                    We ensure practical, modern and effective learning methods.
-                  </p>
+                  <p className="text-gray-600">{value.desc}</p>
                 </div>
               ))}
             </div>

@@ -1,83 +1,120 @@
-import React from 'react';
+import React from "react";
 
 const HeroSection = () => {
   return (
-    <section className="relative w-full min-h-screen">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+    <div className="w-full">
+      {/* ── TOP BANNER ── */}
+      <div
+        className="relative w-full overflow-hidden"
+        style={{ height: "230px" }}
+      >
         <img
-          src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=2448,h=1310,fit=crop/dOqNXeekPrHE45km/tsc-school-1---copy-AGBvZob37oSBNpvr.jpg"
-          alt="School Building"
+          src="/school main banner.jpeg"
+          alt="School Banner"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div
+          className="absolute inset-0"
+          style={{ background: "rgba(56, 142, 60, 0.72)" }}
+        />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10">
-        {/* Top Header with Logo */}
-        <div className="bg-[#8B1538]/95 py-4 px-8 flex items-center justify-center">
-          <img
-            src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=328,h=259,fit=crop/dOqNXeekPrHE45km/tcs-logo-123-d95rjaVGMBUEGBLg.png"
-            alt="Thawe Central School Logo"
-            className="h-24 w-auto mr-6"
-          />
-          <h1 className="text-white text-5xl md:text-6xl font-bold tracking-wide">
-            THAWE CENTRAL SCHOOL
-          </h1>
-        </div>
-
-        {/* Main Content Area with White/Light Background */}
-        <div className="relative bg-gray-50/95 backdrop-blur-sm">
-          {/* Background Image for this section */}
-          <div className="absolute inset-0 z-0">
+      {/* ── WELCOME SECTION ── */}
+      <div className="w-full bg-white py-14">
+        <div className="w-full flex flex-col md:flex-row gap-10 items-start px-6 md:px-16 lg:px-24">
+          {/* Left — Image */}
+          <div className="flex-shrink-0 w-full md:w-[420px]">
             <img
-              src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=2448,h=1310,fit=crop/dOqNXeekPrHE45km/tsc-school-1---copy-AGBvZob37oSBNpvr.jpg"
-              alt="School Background"
-              className="w-full h-full object-cover opacity-20"
+              src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=580,fit=crop/dOqNXeekPrHE45km/tsc-school-1---copy-AGBvZob37oSBNpvr.jpg"
+              alt="Students"
+              className="w-full h-full object-cover"
+              style={{ height: "360px" }}
             />
           </div>
-          
-          <div className="relative z-10 flex flex-col items-center justify-center px-8 py-20">
-            {/* Large Title */}
-            <h2 className="text-[#8B1538] text-7xl md:text-8xl font-bold text-center mb-8 tracking-tight">
-              THAWE CENTRAL
-            </h2>
-            <h2 className="text-[#8B1538] text-7xl md:text-8xl font-bold text-center mb-12 tracking-tight">
-              SCHOOL
+
+          <div>
+            {/* Heading */}
+            <h2
+              className="font-bold text-gray-800 mb-3"
+              style={{ fontSize: "clamp(26px, 3.5vw, 38px)" }}
+            >
+              Welcome to{" "}
+              <span style={{ color: "#4CAF50" }}>Green Field School (GFS)</span>
             </h2>
 
             {/* Tagline */}
-            <p className="text-gray-700 text-xl md:text-2xl text-center max-w-3xl mb-8 font-medium">
-              Empowering Students with Excellence in Education, Character & Innovation
+            <p
+              className="font-bold text-gray-700 mb-5"
+              style={{ fontSize: "16px", lineHeight: 1.6 }}
+            >
+              "Learner centric, Integrated School Empowering Lives through Value
+              Education"
             </p>
 
-            {/* Quick Info Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 w-full max-w-5xl">
-              <div className="bg-white/95 rounded-lg p-6 shadow-xl text-center backdrop-blur-sm">
-                <div className="text-[#8B1538] text-4xl font-bold mb-2">25+</div>
-                <div className="text-gray-600 font-medium">Years of Excellence</div>
-              </div>
-              <div className="bg-white/95 rounded-lg p-6 shadow-xl text-center backdrop-blur-sm">
-                <div className="text-[#8B1538] text-4xl font-bold mb-2">2000+</div>
-                <div className="text-gray-600 font-medium">Students</div>
-              </div>
-              <div className="bg-white/95 rounded-lg p-6 shadow-xl text-center backdrop-blur-sm">
-                <div className="text-[#8B1538] text-4xl font-bold mb-2">100+</div>
-                <div className="text-gray-600 font-medium">Expert Faculty</div>
-              </div>
-            </div>
+            {/* Divider */}
+            <div
+              style={{
+                width: "60px",
+                height: "3px",
+                background: "#4CAF50",
+                marginBottom: "18px",
+              }}
+            />
+
+            {/* Description 1 */}
+            <p
+              className="text-gray-700 mb-4"
+              style={{
+                fontSize: "15px",
+                lineHeight: 1.85,
+                textAlign: "justify",
+              }}
+            >
+              Green Field School (GFS), a learner-centric, integrated and
+              inclusive school based in <strong>Patna, Bihar</strong>, is
+              committed to providing a nurturing and progressive learning
+              environment for students. The school focuses on holistic
+              development, blending academics with values, discipline, and
+              modern learning approaches.
+            </p>
+
+            {/* Description 2 */}
+            <p
+              className="text-gray-700 mb-4"
+              style={{
+                fontSize: "15px",
+                lineHeight: 1.85,
+                textAlign: "justify",
+              }}
+            >
+              GFS was established in the <strong>Summer of 1984</strong> with a
+              clear aim and vision to deliver quality education to future
+              generations and equip students with knowledge, skills, and values
+              needed to thrive in a rapidly changing world. The school
+              emphasizes the integration of modern technologies and innovative
+              teaching methods.
+            </p>
+
+            {/* Description 3 */}
+            <p
+              className="text-gray-700 mb-6"
+              style={{
+                fontSize: "15px",
+                lineHeight: 1.85,
+                textAlign: "justify",
+              }}
+            >
+              At GFS, we strive to create a healthy, happy, creative, and
+              interactive learning environment, where students develop a natural
+              curiosity with an
+              <strong> “I WANT TO KNOW MORE” </strong> attitude. We aim to
+              reduce academic pressure while promoting joyful learning with
+              balanced homework, activities, and assessments.
+            </p>
           </div>
         </div>
       </div>
-
-      {/* Sanskrit Motto at Bottom */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 bg-gray-50/95 backdrop-blur-sm px-6 py-2 rounded-lg">
-        <p className="text-[#8B1538] text-xl font-semibold">
-          सा विद्या या विमुक्तये
-        </p>
-      </div>
-    </section>
+    </div>
   );
 };
 

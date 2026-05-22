@@ -32,7 +32,7 @@ const SchoolFooter = () => {
 
       {/* Email */}
       <p className="text-gray-700">
-        ✉️ thawecentralschool@gmail.com
+        ✉️ greenfieldschool@gmail.com
       </p>
 
       {/* Social Icons */}
