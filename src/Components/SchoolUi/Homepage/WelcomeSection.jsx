@@ -38,6 +38,7 @@ function useMarquee(ref, speed = 0.5) {
 
     let animId;
     let pos = 0;
+    let paused = false;
     const inner = el.querySelector(".marquee-inner");
     if (!inner) return;
 
@@ -45,16 +46,34 @@ function useMarquee(ref, speed = 0.5) {
     clone.setAttribute("aria-hidden", "true");
     el.appendChild(clone);
 
+    // ✅ Pause on hover
+    el.addEventListener("mouseenter", () => {
+      paused = true;
+    });
+    el.addEventListener("mouseleave", () => {
+      paused = false;
+    });
+
     const step = () => {
-      pos -= speed;
-      if (Math.abs(pos) >= inner.offsetHeight) pos = 0;
-      el.style.transform = `translateY(${pos}px)`;
+      if (!paused) {
+        pos -= speed;
+        if (Math.abs(pos) >= inner.offsetHeight) pos = 0;
+        el.style.transform = `translateY(${pos}px)`;
+      }
       animId = requestAnimationFrame(step);
     };
 
     animId = requestAnimationFrame(step);
 
-    return () => cancelAnimationFrame(animId);
+    return () => {
+      cancelAnimationFrame(animId);
+      el.removeEventListener("mouseenter", () => {
+        paused = true;
+      });
+      el.removeEventListener("mouseleave", () => {
+        paused = false;
+      });
+    };
   }, []);
 }
 
