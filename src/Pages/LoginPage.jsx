@@ -36,7 +36,7 @@ export default function LoginPage() {
 
       if (data.success) {
         localStorage.setItem("admin", JSON.stringify(data.admin));
-        navigate("/sms", { replace: true });
+        navigate("/sms/dashboard", { replace: true });
       } else {
         setError(data.message || "Invalid credentials");
       }
