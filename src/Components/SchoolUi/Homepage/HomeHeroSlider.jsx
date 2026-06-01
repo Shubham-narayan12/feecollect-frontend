@@ -1,43 +1,102 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
+import { getAllBannerApi } from "../../../api/bannerApi";
 
 function HomeHeroSlider() {
-  const images = [
-    "https://res.cloudinary.com/doomcnl20/image/upload/v1778002986/WhatsApp_Image_2026-04-14_at_9.23.49_AM_p8qftn.jpg",
-    "https://res.cloudinary.com/doomcnl20/image/upload/v1778003078/WhatsApp_Image_2026-04-14_at_9.23.52_AM_hynenr.jpg",
-    "https://res.cloudinary.com/doomcnl20/image/upload/v1778003145/WhatsApp_Image_2026-04-14_at_9.23.50_AM_1_l5d8il.jpg",
-    "https://res.cloudinary.com/doomcnl20/image/upload/v1778003154/WhatsApp_Image_2026-04-14_at_9.23.50_AM_uedk50.jpg",
-    "https://res.cloudinary.com/doomcnl20/image/upload/v1778003170/WhatsApp_Image_2026-04-14_at_9.23.53_AM_yap5qq.jpg",
-    "https://res.cloudinary.com/doomcnl20/image/upload/v1778003192/WhatsApp_Image_2026-04-14_at_9.23.53_AM_2_jx95k4.jpg",
-  ];
+  const [banners, setBanners] = useState([]);
 
   const [current, setCurrent] = useState(0);
 
+  const [loading, setLoading] = useState(true);
+
+  // ==========================================
+  // FETCH ALL BANNERS
+  // ==========================================
+
+  const fetchAllBanners = async () => {
+    try {
+      setLoading(true);
+
+      const response = await getAllBannerApi();
+
+      setBanners(response?.banners || []);
+    } catch (error) {
+      console.log(error);
+
+      alert(error?.message || "Failed to fetch banners");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % images.length);
-    }, 4000);
-    return () => clearInterval(interval);
+    fetchAllBanners();
   }, []);
+
+  // ==========================================
+  // AUTO SLIDER
+  // ==========================================
+
+  useEffect(() => {
+    if (banners.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % banners.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [banners]);
 
   return (
     <section className="relative w-full min-h-[70vh] md:min-h-[85vh] lg:min-h-screen overflow-hidden">
-      {/* Background Images */}
-      {images.map((img, index) => (
-        <img
-          key={index}
-          src={img}
-          alt="School"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-            index === current ? "opacity-100" : "opacity-0"
-          }`}
-        />
-      ))}
+      {/* ==========================================
+          BANNERS
+      ========================================== */}
 
-      {/* Overlay */}
+      {!loading &&
+        banners.length > 0 &&
+        banners.map((item, index) => (
+          <img
+            key={item._id}
+            src={item.photoUrl}
+            alt={item.bannerTitle}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              index === current ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
+
+      {/* ==========================================
+          FALLBACK IMAGE
+      ========================================== */}
+
+      {!loading && banners.length === 0 && (
+        <img
+          src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1"
+          alt="School"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
+
+      {/* ==========================================
+          LOADING
+      ========================================== */}
+
+      {loading && (
+        <div className="absolute inset-0 bg-slate-200 animate-pulse"></div>
+      )}
+
+      {/* ==========================================
+          OVERLAY
+      ========================================== */}
+
       <div className="absolute inset-0 bg-black/60 z-10"></div>
 
-      {/* Content */}
+      {/* ==========================================
+          CONTENT
+      ========================================== */}
+
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-8">
         {/* Logo */}
         <img

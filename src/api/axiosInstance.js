@@ -1,7 +1,8 @@
 import axios from "axios";
+const VITE_API_BASE_URL = "https://api.greenfieldschools.in/api/v1";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_LOCAL_API_BASE_URL,
+  baseURL: VITE_API_BASE_URL,
   withCredentials: true,
 });
 

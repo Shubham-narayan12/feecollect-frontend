@@ -17,11 +17,10 @@ import {
 /* ================= NEWS TICKER ================= */
 function NewsTicker() {
   const news = [
-    "Green Field School: Excellence in Education Since 1999 — Shaping the Future of Every Child!",
-    "Admission open for 2025-26 session — Apply now!",
-    "Annual Sports Day on 15th May 2025.",
-    "Board results declared — Congrats!",
-    "PTM on 20th May 2025.",
+    "Smart Classes, Modern Labs & Quality Education for Every Student.",
+    "Admissions Open for 2026-27 Session — Enroll Today for a Bright Future!",
+    "Building Knowledge, Discipline & Confidence Since 1994.",
+    "Experienced Teachers, Safe Campus & Holistic Student Development.",
   ];
   const repeated = [...news, ...news];
 
@@ -270,9 +269,9 @@ function SchoolNavbar() {
         </Link>
 
         {/* DESKTOP MENU */}
-        <div className="hidden lg:flex gap-6 xl:gap-8">
+        <div className="hidden lg:flex items-center gap-6 xl:gap-8">
           {menuItems.map((item, index) => (
-            <div key={index} className="relative">
+            <div key={index} className="relative flex items-center h-full">
               {!item.hasDropdown ? (
                 <Link
                   to={item.path}
@@ -282,6 +281,7 @@ function SchoolNavbar() {
                 </Link>
               ) : (
                 <div
+                  className="h-full flex items-center"
                   onMouseEnter={() => setActiveDropdown(index)}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
@@ -293,16 +293,18 @@ function SchoolNavbar() {
                     />
                   </button>
                   {activeDropdown === index && (
-                    <div className="absolute top-full left-0 bg-white shadow-xl rounded-xl mt-2 w-48 py-1 border border-gray-100">
-                      {item.dropdownItems.map((sub, i) => (
-                        <Link
-                          key={i}
-                          to={sub.path}
-                          className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700"
-                        >
-                          {sub.name}
-                        </Link>
-                      ))}
+                    <div className="absolute top-full left-0 w-48 pt-2">
+                      <div className="bg-white shadow-xl rounded-xl py-1 border border-gray-100">
+                        {item.dropdownItems.map((sub, i) => (
+                          <Link
+                            key={i}
+                            to={sub.path}
+                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700"
+                          >
+                            {sub.name}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

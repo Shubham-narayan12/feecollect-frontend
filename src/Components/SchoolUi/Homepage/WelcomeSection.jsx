@@ -1,35 +1,9 @@
 "use client";
-import React, { useRef, useEffect } from "react";
-
-const notices = [
-  "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-  "Desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-  "Many desktop publishing packages and web page editors now use",
-  "Various versions have evolved over the years.",
-  "Welcome To Green Field School",
-  "Report submission till 15/02/2023",
-];
-
-const events = [
-  {
-    month: "June",
-    day: "21",
-    sub: "Maths & English",
-    title: "Offer With Higher Package Of 40 LPA",
-  },
-  {
-    month: "July",
-    day: "05",
-    sub: "Science & Tech",
-    title: "Annual Science Exhibition",
-  },
-  {
-    month: "Aug",
-    day: "12",
-    sub: "Sports Day",
-    title: "Athletics Championship",
-  },
-];
+import React, { useRef, useEffect, useState } from "react";
+import {
+  getAllEventApi,
+  getAllNoticeApi,
+} from "../../../api/noticeAndEventsApi";
 
 function useMarquee(ref, speed = 0.5) {
   useEffect(() => {
@@ -47,12 +21,16 @@ function useMarquee(ref, speed = 0.5) {
     el.appendChild(clone);
 
     // ✅ Pause on hover
-    el.addEventListener("mouseenter", () => {
+    const handleMouseEnter = () => {
       paused = true;
-    });
-    el.addEventListener("mouseleave", () => {
+    };
+
+    const handleMouseLeave = () => {
       paused = false;
-    });
+    };
+
+    el.addEventListener("mouseenter", handleMouseEnter);
+    el.addEventListener("mouseleave", handleMouseLeave);
 
     const step = () => {
       if (!paused) {
@@ -67,18 +45,15 @@ function useMarquee(ref, speed = 0.5) {
 
     return () => {
       cancelAnimationFrame(animId);
-      el.removeEventListener("mouseenter", () => {
-        paused = true;
-      });
-      el.removeEventListener("mouseleave", () => {
-        paused = false;
-      });
+
+      el.removeEventListener("mouseenter", handleMouseEnter);
+      el.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, []);
 }
 
 /* NOTICE */
-function NoticeMarquee() {
+function NoticeMarquee({ notices }) {
   const ref = useRef(null);
   useMarquee(ref, 0.6);
 
@@ -86,10 +61,13 @@ function NoticeMarquee() {
     <div className="overflow-hidden h-[260px] sm:h-[300px] md:h-[340px] relative">
       <div ref={ref}>
         <div className="marquee-inner flex flex-col gap-4 py-2">
-          {notices.map((text, i) => (
-            <div key={i} className="flex gap-2 text-white text-xs sm:text-sm">
+          {notices.map((notice, i) => (
+            <div
+              key={notice._id || i}
+              className="flex gap-2 text-white text-xs sm:text-sm"
+            >
               <span>✔</span>
-              <span>{text}</span>
+              <span>{notice?.notice}</span>
             </div>
           ))}
         </div>
@@ -99,7 +77,7 @@ function NoticeMarquee() {
 }
 
 /* EVENTS */
-function EventMarquee() {
+function EventMarquee({ events }) {
   const ref = useRef(null);
   useMarquee(ref, 0.5);
 
@@ -107,23 +85,36 @@ function EventMarquee() {
     <div className="overflow-hidden h-[260px] sm:h-[300px] md:h-[340px] relative">
       <div ref={ref}>
         <div className="marquee-inner flex flex-col gap-4 py-2">
-          {events.map((ev, i) => (
-            <div key={i} className="flex items-center gap-3 border-b pb-3">
-              {/* Date */}
-              <div className="bg-green-600 text-white rounded-lg px-3 py-2 text-center min-w-[60px]">
-                <p className="text-[10px] font-semibold">{ev.month}</p>
-                <p className="text-lg font-bold">{ev.day}</p>
-              </div>
+          {events.map((ev, i) => {
+            const dateParts = ev.eventDate?.split(" ");
 
-              {/* Info */}
-              <div>
-                <p className="text-xs text-gray-500">{ev.sub}</p>
-                <p className="text-sm font-semibold text-gray-800">
-                  {ev.title}
-                </p>
+            const day = dateParts?.[0];
+            const month = dateParts?.[1];
+
+            return (
+              <div
+                key={ev._id || i}
+                className="flex items-center gap-3 border-b pb-3"
+              >
+                {/* Date */}
+                <div className="bg-green-600 text-white rounded-lg px-3 py-2 text-center min-w-[60px]">
+                  <p className="text-[10px] font-semibold">{month}</p>
+                  <p className="text-lg font-bold">{day}</p>
+                </div>
+
+                {/* Info */}
+                <div>
+                  <p className="text-xs text-gray-500">
+                    {ev.eventTitle || ev.category}
+                  </p>
+
+                  <p className="text-sm font-semibold text-gray-800">
+                    {ev.eventDescription}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
@@ -132,6 +123,47 @@ function EventMarquee() {
 
 /* MAIN */
 export default function WelcomeSection() {
+  const [notices, setNotices] = useState([]);
+  const [events, setEvents] = useState([]);
+
+  // ==============================
+  // GET ALL NOTICE
+  // ==============================
+  const fetchNotices = async () => {
+    try {
+      const response = await getAllNoticeApi();
+
+      if (response?.data?.success) {
+        setNotices(response.data.notices);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ==============================
+  // GET ALL EVENTS
+  // ==============================
+  const fetchEvents = async () => {
+    try {
+      const response = await getAllEventApi();
+
+      if (response?.data?.success) {
+        setEvents(response.data.events);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ==============================
+  // USE EFFECT
+  // ==============================
+  useEffect(() => {
+    fetchNotices();
+    fetchEvents();
+  }, []);
+
   return (
     <section className="bg-white py-10 sm:py-14 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
@@ -140,10 +172,11 @@ export default function WelcomeSection() {
           <h2 className="text-lg sm:text-xl font-bold text-green-800 mb-2">
             Notice Board
           </h2>
+
           <div className="w-12 h-[3px] bg-yellow-500 mb-4"></div>
 
           <div className="bg-green-700 rounded-lg p-4 sm:p-5">
-            <NoticeMarquee />
+            <NoticeMarquee notices={notices} />
           </div>
         </div>
 
@@ -152,9 +185,10 @@ export default function WelcomeSection() {
           <h2 className="text-lg sm:text-xl font-bold text-green-800 mb-2">
             Recent Events
           </h2>
+
           <div className="w-12 h-[3px] bg-yellow-500 mb-4"></div>
 
-          <EventMarquee />
+          <EventMarquee events={events} />
         </div>
       </div>
     </section>

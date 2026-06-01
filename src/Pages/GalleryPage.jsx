@@ -1,84 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, Image as ImageIcon } from "lucide-react";
+import { getAllGalleryApi } from "../api/galleryImagesApi";
 
 const GalleryPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
-
-  const galleryImages = [
-    {
-      id: 1,
-      src: "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=588,h=588,fit=crop/dOqNXeekPrHE45km/tcs-school-image-banner-YKbN4E4pEJsG58we.jpg",
-      title: "School Campus",
-      category: "Infrastructure",
-    },
-    {
-      id: 2,
-      src: "https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=588,h=588,fit=crop/dOqNXeekPrHE45km/thawe-dJoN9M7K8vfDLM2Y.jpg",
-      title: "School Building",
-      category: "Infrastructure",
-    },
-    {
-      id: 3,
-      src: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800",
-      title: "Classroom Learning",
-      category: "Academics",
-    },
-    {
-      id: 4,
-      src: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800",
-      title: "Science Laboratory",
-      category: "Facilities",
-    },
-    {
-      id: 5,
-      src: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800",
-      title: "Sports Activities",
-      category: "Sports",
-    },
-    {
-      id: 6,
-      src: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800",
-      title: "Library",
-      category: "Facilities",
-    },
-    {
-      id: 7,
-      src: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=800",
-      title: "Computer Lab",
-      category: "Facilities",
-    },
-    {
-      id: 8,
-      src: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800",
-      title: "Annual Day Celebration",
-      category: "Events",
-    },
-    {
-      id: 9,
-      src: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800",
-      title: "Playground",
-      category: "Sports",
-    },
-    {
-      id: 10,
-      src: "https://images.unsplash.com/photo-1588072432836-e10032774350?w=800",
-      title: "Cultural Program",
-      category: "Events",
-    },
-    {
-      id: 11,
-      src: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800",
-      title: "Basketball Court",
-      category: "Sports",
-    },
-    {
-      id: 12,
-      src: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800",
-      title: "Study Hall",
-      category: "Academics",
-    },
-  ];
+  const [galleryImages, setGalleryImages] = useState([]);
 
   const categories = [
     "All",
@@ -89,6 +16,33 @@ const GalleryPage = () => {
     "Events",
   ];
   const [activeCategory, setActiveCategory] = useState("All");
+
+  // Fetch gallery images from API
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await getAllGalleryApi();
+
+        // Backend response format ke hisab se data extract krna
+        // Agar response.data.images hai ya direct array hai:
+        const fetchedData = response?.galleries || [];
+
+        // Ensure image object properties match frontend expectations (handling 'src' field fallback)
+        const normalizedImages = fetchedData.map((img) => ({
+          id: img._id || img.id,
+          src: img.src || img.image || img.imageUrl, // Backend field fallbacks
+          title: img.title || "Gallery Image",
+          category: img.category || "Infrastructure",
+        }));
+
+        setGalleryImages(normalizedImages);
+      } catch (err) {
+        console.error("Error fetching gallery images:", err);
+      }
+    };
+
+    fetchImages();
+  }, []);
 
   const filteredImages =
     activeCategory === "All"

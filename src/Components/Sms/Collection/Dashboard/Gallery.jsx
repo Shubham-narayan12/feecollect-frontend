@@ -34,7 +34,7 @@ const Gallery = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [imageToDelete, setImageToDelete] = useState(null);
 
-  const categories = ["All", "Sports", "Academic", "Events", "Campus"];
+  const categories = ["All", "Sports", "Academics", "Events", "Facilities", "Infrastructure"];
 
   const fileInputRef = useRef(null);
 
