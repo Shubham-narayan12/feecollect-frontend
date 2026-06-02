@@ -71,7 +71,7 @@ export default function App() {
 
         {/* 🔐 PROTECTED SMS DASHBOARD */}
         <Route
-          path="/sms"
+          path="/sms/*"
           element={
             <ProtectedRoute>
               <AdminDashboard />
