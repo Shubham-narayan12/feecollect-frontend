@@ -57,7 +57,10 @@ export default function AdminDashboard() {
             <Route path="id-cards" element={<IDCardComponent />} />
 
             {/* Redirect /sms to /sms/dashboard */}
-            <Route path="" element={<Navigate to="dashboard" replace />} />
+            <Route
+              path="/sms"
+              element={<Navigate to="/sms/dashboard" replace />}
+            />
           </Routes>
         </main>
       </div>

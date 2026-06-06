@@ -39,3 +39,9 @@ export const deleteAdmin = async (adminId) => {
 export const logoutAdmin = async () => {
   return axiosInstance.post("/admin/logout");
 };
+
+export const getMeApi = async () => {
+  return await axiosInstance("/admin/get-me", {
+    withCredentials: true,
+  });
+};

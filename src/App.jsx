@@ -28,12 +28,7 @@ import Faculties from "./Components/SchoolUi/Team/Faculties";
 /* 🔐 Admin Pages */
 import LoginPage from "./Pages/LoginPage";
 import AdminDashboard from "./Pages/AdminDashboard";
-
-/* 🔐 Protected Route */
-function ProtectedRoute({ children }) {
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
-}
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 /* 🌐 Public Layout (Navbar + Pages + Footer) */
 function PublicLayout() {
@@ -70,14 +65,9 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
 
         {/* 🔐 PROTECTED SMS DASHBOARD */}
-        <Route
-          path="/sms/*"
-          element={
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/sms/*" element={<AdminDashboard />} />
+        </Route>
 
         {/* 🚫 FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
